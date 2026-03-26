@@ -11,25 +11,33 @@ A portfolio of production-grade healthcare data engineering work: eligibility fi
 ```
 vital-pipeline/
 ├── notebooks/
-│   └── eligibility-qa/           # Eligibility file QA (Sword Health case study)
+│   └── eligibility-qa/         # Eligibility file QA notebook + synthetic data
 ├── ai/
-│   ├── anomaly_detection/        # Claims ML anomaly detection
-│   └── qa_assistant/            # LLM natural language SQL interface
+│   ├── anomaly_detection/      # Claims ML anomaly detection (sklearn)
+│   └── qa_assistant/           # LLM natural language SQL interface (MiniMax)
+├── synthea_pipeline/           # Synthea → OMOP CDM via dbt
+├── docs_parsing/               # PDF parsing pipeline (LiteParse + Tesseract OCR)
 ├── dbt_project/
-│   ├── models/                   # dbt data models
-│   │   ├── staging/             # Raw → staging
-│   │   ├── intermediate/        # Business logic
+│   ├── models/                 # dbt data models
+│   │   ├── staging/            # Raw → staging
+│   │   ├── intermediate/       # Business logic
 │   │   └── marts/              # Analytics-ready
-│   ├── tests/                   # dbt data quality tests
-│   ├── seeds/                   # Reference data (ICD-10, CPT codes)
-│   └── macros/                  # Reusable SQL macros
+│   ├── tests/                  # dbt data quality tests
+│   ├── seeds/                  # Reference data (ICD-10, CPT codes)
+│   └── macros/                 # Reusable SQL macros
 ├── sql/
-│   └── healthcare-analytics/    # Window functions, CTEs, healthcare queries
+│   └── healthcare-analytics/   # Window functions, CTEs, healthcare queries
 ├── pipelines/
-│   └── eligibility-etl/         # Python + Airflow DAG
-├── data_quality/               # Great Expectations suite
-└── docs/
-    └── data-dictionary.md      # Column-level documentation
+│   └── eligibility-etl/        # Python + Airflow DAG
+├── data_quality/              # Great Expectations suite
+├── prefect_flows/             # Prefect 3.x pipeline (modern orchestration)
+├── infrastructure/            # Terraform IaC (AWS VPC, RDS, S3, ECS)
+├── data_contracts/            # Open Data Contract Standard YAML SLA
+├── docs/
+│   ├── data-dictionary.md     # Column-level documentation
+│   └── architecture_diagram.md # Full Mermaid architecture diagrams
+└── .github/workflows/
+    └── ci.yaml               # 6-job CI pipeline
 ```
 
 ---
@@ -67,6 +75,20 @@ Natural language interface to the eligibility dataset:
 - Demo mode with 8 pre-set healthcare data quality questions
 
 See: [ai/qa_assistant/](ai/qa_assistant/)
+
+---
+
+## 📄 PDF Document Parsing (`docs_parsing/`)
+
+LiteParse (LlamaIndex, open-source) — fast local PDF parsing with bounding boxes + OCR:
+- **No cloud dependency** — 100% local, HIPAA-compliant for PHI documents
+- Built-in Tesseract.js OCR — scanned documents supported
+- Bounding box extraction — field-level parsing (extract member ID without touching the rest)
+- Batch directory processing — parse dozens of PDFs in one run
+- Screenshot generation — visual page images for LLM verification
+- Feeds directly into the LLM QA assistant for natural language querying
+
+See: [docs_parsing/](docs_parsing/)
 
 ---
 
@@ -204,11 +226,14 @@ See [docs/data-dictionary.md](docs/data-dictionary.md) for column-level document
 | Python + Pandas | `notebooks/eligibility-qa/` |
 | **AI/ML anomaly detection** | `ai/anomaly_detection/` (Isolation Forest, Z-score, IQR) |
 | **LLM + natural language SQL** | `ai/qa_assistant/` (MiniMax, RAG-style Q&A) |
+| **PDF parsing + OCR** | `docs_parsing/` (LiteParse, Tesseract.js) |
 | SQL (window fns, CTEs) | `sql/healthcare-analytics/` |
 | dbt modeling | `dbt_project/models/` |
-| Data quality testing | `dbt_project/tests/` + `data_quality/` |
-| ETL pipeline design | `pipelines/eligibility-etl/` |
-| Healthcare domain | ICD-10, CPT, PMPM, VBC, HCC |
+| OMOP CDM mapping | `synthea_pipeline/` (ICD-10 → SNOMED, RxNorm) |
+| Prefect orchestration | `prefect_flows/` (modern Airflow alternative) |
+| Terraform IaC | `infrastructure/` (AWS VPC, RDS, S3, ECS) |
+| Data contracts | `data_contracts/` (ODCS v3 YAML SLA) |
+| Healthcare domain | ICD-10, CPT, PMPM, VBC, HCC, OMOP |
 
 ---
 

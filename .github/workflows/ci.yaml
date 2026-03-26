@@ -22,10 +22,18 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install LiteParse
+        run: npm install -g @llamaindex/liteparse
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas jupyter nbformat great-expectations pytest pytest-mock
+          pip install pandas jupyter nbformat great-expectations pytest pytest-mock reportlab
 
       - name: Generate synthetic data
         run: cd notebooks/eligibility-qa && python generate_data.py
@@ -49,6 +57,11 @@ jobs:
         run: |
           python notebooks/eligibility-qa/data/generate_data.py || true
           python data_quality/run_gx_suite.py notebooks/eligibility-qa/data/eligibility_dirty.csv || true
+
+      - name: Run LiteParse PDF pipeline smoke test
+        run: |
+          lit --version
+          python docs_parsing/parse_pdfs.py --file sample_pdfs/eob_sample.pdf --output output || true
 
   # ============================================================
   # SQL: Syntax validation
