@@ -1,0 +1,48 @@
+name: synthea_omop_pipeline
+version: 1.0.0
+config-version: 2
+
+vars:
+  # Synthea source schema
+  source_schema: staging_synthea
+  omop_schema: omop
+
+  # Standard vocabularies (OMOP convention)
+  vocabulary_schema: omop_vocab
+  vocab_version: v5_0
+
+on-run-start:
+  - "CREATE SCHEMA IF NOT EXISTS {{ target.schema }}"
+  - "CREATE SCHEMA IF NOT EXISTS {{ var('omop_schema') }}"
+
+models:
+  synthea_omop_pipeline:
+    staging:
+      schema: staging
+      enabled: true
+    omop:
+      schema: omop
+      enabled: true
+    marts:
+      schema: marts
+      enabled: true
+
+seeds:
+  +schema: omop_vocab
+  +enabled: true
+  +column_types:
+    concept_id: integer
+    concept_name: varchar(255)
+    domain_id: varchar(20)
+    vocabulary_id: varchar(20)
+
+  concept_map_icd10_sct:
+    +column_types:
+      source_code: varchar(20)
+      target_concept_id: integer
+      target_vocabulary_id: varchar(20)
+
+  concept_map_rxnorm:
+    +column_types:
+      source_code: varchar(20)
+      target_concept_id: integer

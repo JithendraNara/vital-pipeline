@@ -1,0 +1,324 @@
+# data_contracts/eligibility_data_contract.yml
+# Open Data Contract Standard (ODCS) — v3.0
+# Formal SLA between data producers and consumers for eligibility data
+#
+# Reference: https://datacontract.com / https://bitol-io/open-data-contract-standard
+#
+# Purpose: Defines structure, quality SLAs, and delivery guarantees for
+# the eligibility dataset consumed by analytics, dbt, and downstream mart pipelines.
+
+dataContract:
+  id: vital-pipeline-eligibility-v1
+  version: "1.0.0"
+  model: tabular
+
+  # Description
+  description: |
+    Eligibility roster data for healthcare members.
+    Covers active and terminated enrollments across plan types (HMO, PPO, EPO, HDHP, POS)
+    and metal levels (Bronze, Silver, Gold, Platinum).
+
+  # Owner / steward
+  owner: data-platform-team
+  email: data-platform@vitalpipeline.io
+  domain: healthcare-eligibility
+  tags:
+    - healthcare
+    - eligibility
+    - roster
+    - HIPAA-sensitive
+  sensitivityClassification: PHI  # Eligibility data contains PHI
+
+  # Infrastructure
+  infrastructure:
+    technology: PostgreSQL 15+
+    storage: AWS RDS (vital-pipeline-db)
+    schema: staging.eligibility_members
+    refreshCadence: daily
+    upstreamSource: Salesforce (plan enrollment system)
+
+  # Availability SLA
+  availability:
+    uptimeTarget: 99.9%
+    uptimeMeasurement: monthly
+    maxDailyLatency: PT2H  # 2 hours past scheduled run
+    downtimeWindow: "Sun 02:00-04:00 UTC"
+    incidentResponse: P1 incident declared if downtime > 30 min
+
+  # Security & Compliance
+  security:
+    encryptionAtRest: true      # AES-256
+    encryptionInTransit: true  # TLS 1.2+
+    phiHandling: true          # HIPAA-covered entity
+    accessControl: IAM + RBAC
+    auditLogging: CloudWatch
+    dataRetention: 7 years      # HIPAA requirement
+
+# ============================================================
+# Schema Definition
+# ============================================================
+
+schema:
+  columns:
+    - name: mem_id
+      type: varchar(20)
+      description: Unique member identifier (from payer system)
+      primaryKey: true
+      nullable: false
+      sensitivity: LOW
+
+    - name: first_name
+      type: varchar(50)
+      description: Member first name
+      nullable: false
+      sensitivity: PHI  # PII
+
+    - name: last_name
+      type: varchar(50)
+      description: Member last name
+      nullable: false
+      sensitivity: PHI
+
+    - name: dob
+      type: date
+      description: Date of birth (YYYY-MM-DD)
+      nullable: false
+      sensitivity: PHI
+
+    - name: email
+      type: varchar(100)
+      description: Member email address
+      nullable: true
+      sensitivity: PHI
+      piiCategory: email
+
+    - name: phone
+      type: varchar(20)
+      description: Member phone number
+      nullable: true
+      sensitivity: PHI
+      piiCategory: phone
+
+    - name: address
+      type: varchar(200)
+      description: Full street address
+      nullable: true
+      sensitivity: PHI
+      piiCategory: address
+
+    - name: city
+      type: varchar(100)
+      description: City of residence
+      nullable: true
+      sensitivity: LOW
+
+    - name: state
+      type: varchar(2)
+      description: 2-letter US state code
+      nullable: false
+      allowedValues:
+        - [AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY, DC]
+      sensitivity: LOW
+
+    - name: zip_code
+      type: varchar(10)
+      description: ZIP code (5 digits or ZIP+4). Leading zeros MUST be preserved.
+      nullable: false
+      format: "^[0-9]{5}(-[0-9]{4})?$"
+      sensitivity: LOW
+
+    - name: effective_date
+      type: date
+      description: Coverage start date
+      nullable: false
+      sensitivity: LOW
+
+    - name: termination_date
+      type: varchar(20)
+      description: "Coverage end date. 'Active' = currently enrolled."
+      nullable: false
+      sensitivity: LOW
+
+    - name: covered_relation
+      type: varchar(20)
+      description: Relationship to primary subscriber
+      nullable: false
+      allowedValues: [Self, Spouse, Child, Domestic Partner]
+      sensitivity: LOW
+
+    - name: plan_type
+      type: varchar(10)
+      description: Plan design type
+      nullable: false
+      allowedValues: [HMO, PPO, EPO, HDHP, POS]
+      sensitivity: LOW
+
+    - name: metal_level
+      type: varchar(10)
+      description: ACA metal level (affects cost-sharing)
+      nullable: false
+      allowedValues: [Bronze, Silver, Gold, Platinum]
+      sensitivity: LOW
+
+    - name: subscriber_id
+      type: varchar(20)
+      description: Primary subscriber's member ID (for dependents)
+      nullable: true
+      sensitivity: LOW
+
+    - name: employer_group
+      type: varchar(100)
+      description: Employer group name (for group plans)
+      nullable: true
+      sensitivity: LOW
+
+    - name: coverage_tier
+      type: varchar(10)
+      description: Employee + Dependent tier
+      nullable: false
+      allowedValues: [Employee, Employee+Spouse, Employee+Children, Family]
+      sensitivity: LOW
+
+    - name: monthly_premium
+      type: decimal(10,2)
+      description: Monthly premium amount in USD
+      nullable: false
+      sensitivity: LOW
+
+# ============================================================
+# Quality SLAs
+# ============================================================
+
+quality:
+  # Completeness — null/missing field thresholds
+  completeness:
+    mem_id:
+      minimum: "100%"     # Must always be present
+      fatal: true         # Fail pipeline if violated
+    dob:
+      minimum: "99.5%"
+      fatal: false
+    email:
+      minimum: "95%"
+      fatal: false
+    phone:
+      minimum: "90%"
+      fatal: false
+    zip_code:
+      minimum: "99%"
+      fatal: false
+
+  # Accuracy — field-level validation rules
+  accuracy:
+    dob:
+      description: "DOB must be in the past and represent age 0-120"
+      sqlFilter: "dob <= CURRENT_DATE AND dob >= CURRENT_DATE - INTERVAL '120 years'"
+    zip_code:
+      description: "ZIP must be 5 digits (leading zeros preserved)"
+      sqlFilter: "zip_code ~ '^[0-9]{5}(-[0-9]{4})?$'"
+    effective_date:
+      description: "Effective date must be on or before today"
+      sqlFilter: "effective_date <= CURRENT_DATE"
+    termination_date:
+      description: "If 'Active', must be NULL; if a date, must be >= effective_date"
+      sqlFilter: "(termination_date = 'Active') OR (termination_date::date >= effective_date)"
+    age_at_enrollment:
+      description: "Dependents (Child) must be under 26 at effective date"
+      sqlFilter: |
+        CASE
+          WHEN covered_relation = 'Child'
+          THEN DATE_PART('year', AGE(effective_date, dob)) < 26
+          ELSE TRUE
+        END
+
+  # Uniqueness — duplicate detection
+  uniqueness:
+    mem_id:
+      description: "mem_id must be globally unique (no duplicate member IDs)"
+      sqlFilter: "COUNT(*) OVER (PARTITION BY mem_id) = 1"
+      fatal: true
+
+  # Consistency — cross-field relationships
+  consistency:
+    child_age:
+      description: "Members with covered_relation='Child' must have age < 26"
+      severity: ERROR
+    employer_group_required:
+      description: "Non-Self members must have a subscriber_id"
+      severity: ERROR
+    plan_metal_alignment:
+      description: "HMO/EPO typically Silver/Gold; HDHP typically Bronze"
+      severity: WARNING
+
+  # Timeliness — freshness SLA
+  timeliness:
+    maxAge:
+      value: 24
+      unit: hours
+      description: "File must be refreshed within 24 hours of scheduled run"
+    lastRefresh:
+      description: "Timestamp of last successful load"
+      query: "SELECT MAX(_etl_loaded_at) FROM staging.eligibility_members"
+
+  # Volume — row count sanity checks
+  volume:
+    rowCount:
+      minimum: 100
+      maximum: 10_000_000
+      description: "Sanity check on total member count"
+    dailyDelta:
+      minimum: -0.10  # Allow up to 10% decrease (terminations)
+      maximum: 0.25   # Allow up to 25% increase (new enrollments)
+      description: "Day-over-day change tolerance"
+
+# ============================================================
+# Partitioning & Backfill
+# ============================================================
+
+partitioning:
+  strategy: daily
+  partitionColumn: effective_date
+  clusteringColumns:
+    - state
+    - plan_type
+    - metal_level
+
+backfill:
+  fullRefreshCadence: monthly
+  lookbackWindow: 90 days
+  rescanAfterUplift: true
+
+# ============================================================
+# Examples (sample data)
+# ============================================================
+
+examples:
+  valid:
+    - mem_id: MEM000001
+      first_name: Sarah
+      last_name: Chen
+      dob: "1985-03-15"
+      email: sarah.chen@email.com
+      phone: "+1-260-555-0142"
+      state: IN
+      zip_code: "46825"
+      effective_date: "2025-01-01"
+      termination_date: "Active"
+      covered_relation: "Self"
+      plan_type: PPO
+      metal_level: Gold
+
+  invalid:
+    - description: "Integer zip loses leading zeros"
+      data:
+        mem_id: MEM000072
+        zip_code: 46032
+    - description: "Child over age 26"
+      data:
+        mem_id: MEM000109
+        dob: "1995-07-22"
+        covered_relation: "Child"
+    - description: "Duplicate mem_id"
+      data:
+        - mem_id: MEM000041
+        - mem_id: MEM000041
