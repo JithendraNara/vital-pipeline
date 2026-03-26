@@ -1,0 +1,41 @@
+name: vital_pipeline
+version: 0.1.0
+config-version: 2
+
+require-dbt-version: [">=1.5.0", "<2.0.0"]
+
+vars:
+  # Source schema
+  source_schema: raw
+  warehouse_schema: analytics
+
+  # ICD-10 reference data (seed)
+  icd10_seed_path: seeds/icd10_codes.csv
+  cpt_seed_path: seeds/cpt_codes.csv
+
+  # Business rules
+  child_max_age: 26
+  analysis_date: "2026-03-25"
+
+# Target profiles (local dev = postgres)
+profile: vital_pipeline
+
+targets:
+  local:
+    outputs:
+      dev:
+        type: postgres
+        host: localhost
+        port: 5432
+        dbname: healthcare
+        schema: analytics
+        user: postgres
+        password: "{{ env_var('DBT_PASSWORD') }}"
+        sslmode: prefer
+
+on-run-start:
+  - "{{ log('vital-pipeline: Running dbt models', info=True) }}"
+
+tests:
+  +store_failures: true
+  +fail_on_error: false

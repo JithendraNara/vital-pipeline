@@ -1,0 +1,16 @@
+icd10_code,description,hcc_code,hcc_weight,category
+E11.9,Type 2 diabetes mellitus without complications,E11,1.0,Endocrine
+I10,Essential (primary) hypertension,I10,0.97,Cardiovascular
+J44.1,Chronic obstructive pulmonary disease,bronchitis,J44,0.72,Pulmonary
+K21.0,Gastro-esophageal reflux disease,K21,0.31,Gastrointestinal
+N18.3,Chronic kidney disease,N18,0.78,Genitourinary
+R73.03,Prediabetes,R73,0.27,Endocrine
+E78.5,Hyperlipidemia,E78,0.54,Endocrine
+I25.10,Atherosclerotic heart disease,I25,0.80,Cardiovascular
+M79.3,Panniculitis,M79,0.22,Musculoskeletal
+F32.9,Major depressive disorder, single episode,F32,0.36,Mental Health
+R51,Headache,G43,0.31,Neurological
+E03.9,Hypothyroidism,E03,0.25,Endocrine
+J45.909,Asthma, unspecified,J45,0.43,Pulmonary
+M54.5,Low back pain,M54,0.19,Musculoskeletal
+K20.9,Esophagitis, unspecified,K20,0.18,Gastrointestinal

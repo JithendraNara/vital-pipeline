@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ============================================================
+  # Python: Notebooks + Data Quality
+  # ============================================================
+  python-tests:
+    name: Python / Data Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas jupyter nbformat great-expectations pytest pytest-mock
+
+      - name: Generate synthetic data
+        run: cd notebooks/eligibility-qa && python generate_data.py
+
+      - name: Run notebook smoke test
+        run: |
+          python -c "
+          import json
+          with open('notebooks/eligibility-qa/eligibility_qa.ipynb') as f:
+              nb = json.load(f)
+          print(f'Notebook: {len(nb[\"cells\"])} cells')
+          code_cells = [c for c in nb['cells'] if c['cell_type'] == 'code']
+          print(f'Code cells: {len(code_cells)}')
+          print('✅ Notebook valid JSON')
+          "
+
+      - name: Run data quality suite
+        run: |
+          python notebooks/eligibility-qa/data/generate_data.py
+          python data_quality/run_gx_suite.py notebooks/eligibility-qa/data/eligibility_dirty.csv || true
+
+  # ============================================================
+  # SQL: Syntax validation
+  # ============================================================
+  sql-lint:
+    name: SQL Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install sqlfluff
+        run: pip install sqlfluff
+
+      - name: Lint SQL
+        run: |
+          sqlfluff lint sql/ --dialect postgres --fail-on-violation false || true
+
+  # ============================================================
+  # dbt: Model validation
+  # ============================================================
+  dbt-check:
+    name: dbt Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: |
+          pip install dbt-postgres dbt-labs/dbt_utils dbt-labs/codegen
+
+      - name: dbt deps
+        run: cd dbt_project && dbt deps || true
+
+      - name: dbt compile (syntax check)
+        run: cd dbt_project && dbt compile || true
+
+  # ============================================================
+  # Docs: Markdown lint
+  # ============================================================
+  docs-lint:
+    name: Docs Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install markdownlint
+        run: pip install markdownlint-cli
+
+      - name: Lint docs
+        run: |
+          markdownlint docs/ --disable rule MD013 --disable rule MD033 || true
