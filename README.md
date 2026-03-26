@@ -12,6 +12,9 @@ A portfolio of production-grade healthcare data engineering work: eligibility fi
 vital-pipeline/
 ├── notebooks/
 │   └── eligibility-qa/           # Eligibility file QA (Sword Health case study)
+├── ai/
+│   ├── anomaly_detection/        # Claims ML anomaly detection
+│   └── qa_assistant/            # LLM natural language SQL interface
 ├── dbt_project/
 │   ├── models/                   # dbt data models
 │   │   ├── staging/             # Raw → staging
@@ -41,6 +44,29 @@ vital-pipeline/
                                          ▼
                               [Mart Tables ──▶ Analytics / BI]
 ```
+
+---
+
+## 🤖 AI / ML Layer
+
+### Anomaly Detection (`ai/anomaly_detection/`)
+Detects unusual claims patterns using statistical and ML methods:
+- **Z-score** — univariate cost outliers (>3σ)
+- **IQR** — non-parametric outlier bounds
+- **Isolation Forest** — multivariate ML anomaly detection
+- **Utilization analysis** — flags members with abnormally high claim frequency
+- Risk tiers: Normal → Monitor → Elevated → Critical
+
+See: [ai/anomaly_detection/](ai/anomaly_detection/)
+
+### LLM QA Assistant (`ai/qa_assistant/`)
+Natural language interface to the eligibility dataset:
+- Ask questions in plain English → SQL is generated and executed
+- Built with MiniMax + SQLite
+- Safe: read-only queries, no data modification
+- Demo mode with 8 pre-set healthcare data quality questions
+
+See: [ai/qa_assistant/](ai/qa_assistant/)
 
 ---
 
@@ -176,6 +202,8 @@ See [docs/data-dictionary.md](docs/data-dictionary.md) for column-level document
 | Skill | Where |
 |-------|-------|
 | Python + Pandas | `notebooks/eligibility-qa/` |
+| **AI/ML anomaly detection** | `ai/anomaly_detection/` (Isolation Forest, Z-score, IQR) |
+| **LLM + natural language SQL** | `ai/qa_assistant/` (MiniMax, RAG-style Q&A) |
 | SQL (window fns, CTEs) | `sql/healthcare-analytics/` |
 | dbt modeling | `dbt_project/models/` |
 | Data quality testing | `dbt_project/tests/` + `data_quality/` |

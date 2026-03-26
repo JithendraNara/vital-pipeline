@@ -1,0 +1,229 @@
+mem_id,first_name,last_name,dob,email,phone,city,state,zip_code,effective_date,termination_date,covered_relation,plan_type,metal_level
+MEM000001,Kenneth,Brown,1998-09-19,kenneth.brown@outlook.com,260-958-9935,Fort Wayne,TX,23434,2025-05-21,Active,Child,PPO,Bronze
+MEM000002,Mary,Williams,1959-08-13,mary.williams@gmail.com,260-933-9928,New York,IN,83563,2025-04-30,Active,Self,PPO,Gold
+MEM000003,Sarah,Sanchez,1940-07-31,sarah.sanchez@gmail.com,260-420-6514,Fort Wayne,CA,46421,2025-03-23,Active,Self,PPO,Bronze
+MEM000004,Daniel,Lopez,1994-02-28,daniel.lopez@gmail.com,260-587-2291,Phoenix,MA,8786,2025-05-16,Active,Self,EPO,Gold
+MEM000005,Lisa,Jackson,1957-04-01,lisa.jackson@gmail.com,260-438-2654,New York,AZ,47930,2025-12-27,2025-12-05,Self,PPO,Gold
+MEM000006,Lisa,Garcia,1973-03-18,lisa.garcia@outlook.com,260-273-3803,Phoenix,FL,99593,2025-07-01,Active,Self,HMO,Silver
+MEM000007,Matthew,Rodriguez,1997-06-01,matthew.rodriguez@gmail.com,260-232-6168,New York,CA,17331,2025-12-19,Active,Self,HMO,Bronze
+MEM000008,Andrew,Thompson,2000-04-08,,260-471-3287,Indianapolis,NY,7518,2025-04-19,Active,Child,EPO,Silver
+MEM000009,Melissa,Jackson,1978-06-08,melissa.jackson@outlook.com,260-705-2489,Fort Wayne,AZ,28131,2025-10-26,Active,Self,HMO,Gold
+MEM000010,William,Sanchez,2003-03-28,william.sanchez@outlook.com,260-679-9669,Chicago,NY,6253,2025-08-05,Active,Child,HMO,Gold
+MEM000011,George,Brown,2001-02-27,george.brown@yahoo.com,260-645-3591,New York,CA,24621,2025-10-02,Active,Self,EPO,Gold
+MEM000012,Thomas,Taylor,2008-05-10,thomas.taylor@yahoo.com,260-854-9317,Phoenix,IL,91959,2025-04-02,Active,Self,HMO,Silver
+MEM000013,Timothy,Garcia,1988-05-22,timothy.garcia@gmail.com,260-314-6947,Chicago,CA,74042,2025-09-29,Active,Self,HMO,Bronze
+MEM000014,Andrew,Williams,1947-09-07,andrew.williams@gmail.com,260-875-8787,Phoenix,CT,2061,2025-09-06,Active,Self,PPO,Gold
+MEM000015,Joshua,Wilson,1992-04-13,joshua.wilson@yahoo.com,260-887-7118,New York,AZ,50857,2025-10-04,Active,Child,PPO,Bronze
+MEM000016,Jessica,Davis,1945-09-29,jessica.davis@gmail.com,260-207-2163,Fort Wayne,AZ,87128,2025-06-23,2025-10-11,Self,HMO,Bronze
+MEM000017,Nancy,Williams,1986-02-15,nancy.williams@outlook.com,260-335-8744,Indianapolis,MA,3511,2025-05-02,Active,Spouse,PPO,Bronze
+MEM000018,Michael,Brown,1999-02-13,michael.brown@outlook.com,260-255-2612,Fort Wayne,NY,7652,2025-08-09,Active,Spouse,EPO,Silver
+MEM000019,Michael,Davis,1957-03-10,michael.davis@gmail.com,260-485-8579,Indianapolis,TX,65296,2025-04-08,Active,Self,PPO,Gold
+MEM000020,Michael,Johnson,1998-07-04,michael.johnson@gmail.com,260-616-8956,New York,IL,40982,2025-10-04,Active,Self,PPO,Bronze
+MEM000021,William,Gonzalez,1940-03-11,william.gonzalez@yahoo.com,260-913-8973,Indianapolis,MA,4674,2025-07-19,Active,Self,PPO,Bronze
+MEM000022,Patricia,Jackson,2006-01-02,patricia.jackson@outlook.com,260-688-9238,Phoenix,IN,16572,2025-10-05,2025-06-10,Self,HMO,Gold
+MEM000023,Jennifer,Garcia,1946-02-23,jennifer.garcia@outlook.com,260-452-1651,Phoenix,NY,1965,2025-11-01,Active,Self,PPO,Gold
+MEM000024,Donna,Jackson,1986-11-25,donna.jackson@outlook.com,260-521-4910,Chicago,AZ,97782,2025-06-11,Active,Spouse,HMO,Gold
+MEM000025,Dorothy,Martinez,1996-03-30,dorothy.martinez@yahoo.com,260-836-2638,Fort Wayne,IL,11220,2025-06-11,Active,Child,HMO,Gold
+MEM000026,Thomas,Jones,1992-07-24,thomas.jones@gmail.com,260-648-9900,Chicago,CA,47353,2025-02-05,Active,Child,EPO,Gold
+MEM000027,James,Perez,1989-10-03,james.perez@yahoo.com,260-318-2753,Phoenix,IL,27601,2025-06-03,Active,Self,PPO,Silver
+MEM000028,Joshua,Miller,2004-05-18,joshua.miller@yahoo.com,260-457-1832,Fort Wayne,FL,76244,2025-06-25,Active,Spouse,PPO,Bronze
+MEM000029,James,Hernandez,2009-03-07,james.hernandez@outlook.com,260-652-8007,Phoenix,FL,31178,2025-03-08,Active,Self,HMO,Bronze
+MEM000030,Brian,Jones,1988-12-11,brian.jones@yahoo.com,260-330-1685,Chicago,CT,2427,2025-01-19,Active,Self,HMO,Silver
+MEM000031,Susan,Perez,1962-05-21,susan.perez@gmail.com,260-366-3900,New York,NY,2533,2025-12-08,2025-10-14,Self,HMO,Gold
+MEM000032,Nancy,Sanchez,1976-12-08,nancy.sanchez@gmail.com,260-918-2771,New York,AZ,44970,2025-12-09,Active,Self,PPO,Bronze
+MEM000033,Richard,Clark,1981-04-18,richard.clark@gmail.com,260-875-4164,New York,AZ,39219,2025-06-29,Active,Self,PPO,Bronze
+MEM000034,Sarah,Lopez,2002-01-16,,260-318-5279,Indianapolis,CT,5426,2025-09-18,Active,Child,PPO,Bronze
+MEM000035,Michael,Martin,1998-05-17,michael.martin@outlook.com,260-723-2894,New York,CA,67199,2025-06-26,Active,Child,HMO,Silver
+MEM000036,Robert,Thompson,2002-12-13,robert.thompson@yahoo.com,,Chicago,CT,3229,2025-01-01,Active,Child,PPO,Gold
+MEM000037,Linda,White,1966-12-10,linda.white@yahoo.com,260-913-5844,Phoenix,NY,5345,2025-09-17,Active,Self,HMO,Silver
+MEM000038,Kevin,Gonzalez,2000-10-06,kevin.gonzalez@outlook.com,260-200-5978,Chicago,FL,63225,2025-03-31,Active,Self,PPO,Gold
+MEM000039,Joshua,Lee,1968-11-28,joshua.lee@yahoo.com,260-953-3780,Fort Wayne,AZ,77000,2025-08-27,Active,Self,EPO,Gold
+MEM000040,Kenneth,Martin,1970-01-26,kenneth.martin@yahoo.com,260-430-4262,Indianapolis,AZ,98184,2025-02-17,Active,Self,HMO,Bronze
+MEM000041,Donald,Martin,2008-12-10,donald.martin@yahoo.com,260-609-4997,Indianapolis,AZ,60328,2025-02-07,Active,Self,HMO,Silver
+MEM000042,Joseph,Garcia,1995-11-20,joseph.garcia@gmail.com,260-667-3184,New York,CT,4083,2025-09-23,Active,Child,EPO,Gold
+MEM000043,Christopher,Harris,1979-09-15,christopher.harris@outlook.com,260-656-3607,New York,CT,6992,2025-11-10,Active,Spouse,PPO,Bronze
+MEM000044,Kenneth,Rodriguez,2008-09-14,kenneth.rodriguez@yahoo.com,260-279-5681,Indianapolis,AZ,45992,2025-09-24,Active,Self,PPO,Silver
+MEM000045,Paul,Williams,1992-08-23,paul.williams@gmail.com,260-624-7678,Chicago,TX,38043,2025-03-19,Active,Child,PPO,Silver
+MEM000046,Patricia,Miller,1977-09-10,patricia.miller@yahoo.com,260-688-1096,Chicago,IN,85456,2025-07-19,Active,Self,PPO,Silver
+MEM000047,Paul,White,2005-11-27,paul.white@gmail.com,260-479-8140,New York,AZ,73993,2025-10-07,Active,Self,PPO,Silver
+MEM000048,Kevin,Perez,1997-10-21,kevin.perez@outlook.com,260-227-7455,Phoenix,TX,91560,2025-03-26,Active,Child,EPO,Bronze
+MEM000049,Jennifer,Lee,1978-06-14,jennifer.lee@yahoo.com,260-588-6363,Indianapolis,TX,16590,2025-03-11,Active,Spouse,PPO,Silver
+MEM000050,Timothy,Gonzalez,1964-12-17,timothy.gonzalez@gmail.com,260-967-9837,Fort Wayne,IL,71644,2025-08-04,Active,Self,HMO,Gold
+MEM000051,John,Harris,1998-06-21,john.harris@gmail.com,260-836-3496,Indianapolis,AZ,36130,2025-01-21,Active,Self,PPO,Gold
+MEM000052,Linda,Jackson,1959-07-22,linda.jackson@outlook.com,260-821-2876,Indianapolis,CA,31992,2025-08-27,Active,Self,HMO,Gold
+MEM000053,Mary,Martinez,1991-08-28,mary.martinez@outlook.com,260-403-2245,Phoenix,NY,6499,2025-12-13,Active,Self,HMO,Gold
+MEM000054,Karen,Perez,1994-10-26,karen.perez@outlook.com,260-638-7071,Fort Wayne,IN,55508,2025-03-03,Active,Child,EPO,Silver
+MEM000055,James,Wilson,1983-12-23,james.wilson@yahoo.com,260-924-3506,New York,CA,93307,2025-02-24,Active,Self,EPO,Gold
+MEM000056,Dorothy,Rodriguez,1995-04-04,dorothy.rodriguez@outlook.com,260-806-5397,Chicago,MA,7137,2025-10-03,Active,Self,HMO,Silver
+MEM000057,Mark,Davis,2007-04-30,mark.davis@gmail.com,260-706-6325,Indianapolis,NY,5512,2025-08-26,Active,Spouse,HMO,Silver
+MEM000058,Thomas,Hernandez,1965-02-01,thomas.hernandez@gmail.com,260-729-4130,Fort Wayne,FL,82848,2025-11-02,Active,Self,EPO,Silver
+MEM000059,Ashley,Moore,2008-01-07,ashley.moore@gmail.com,260-295-5820,Indianapolis,MA,7343,2025-05-04,Active,Spouse,EPO,Bronze
+MEM000060,Karen,Perez,1992-03-04,karen.perez@yahoo.com,260-963-6419,Chicago,CT,5633,2025-07-08,Active,Spouse,PPO,Silver
+MEM000061,Thomas,Davis,1997-04-24,thomas.davis@gmail.com,260-421-8933,Chicago,CT,3034,2025-04-09,Active,Child,EPO,Gold
+MEM000062,Charles,Brown,1957-05-31,charles.brown@gmail.com,260-925-9751,Indianapolis,TX,49618,2025-06-01,Active,Self,HMO,Bronze
+MEM000063,Emily,Martinez,2002-07-26,emily.martinez@gmail.com,260-787-5658,New York,MA,1681,2025-03-06,Active,Spouse,PPO,Silver
+MEM000064,Barbara,Johnson,1962-08-26,barbara.johnson@gmail.com,260-790-1878,Indianapolis,NY,8057,2025-09-02,2025-02-03,Self,EPO,Silver
+MEM000065,Jennifer,Davis,2001-06-16,jennifer.davis@yahoo.com,260-661-8253,Chicago,AZ,78494,2025-10-13,Active,Child,PPO,Silver
+MEM000066,Andrew,Martin,1945-05-27,andrew.martin@outlook.com,260-416-5335,Fort Wayne,IL,37235,2025-11-09,Active,Self,HMO,Bronze
+MEM000067,Emily,Williams,1954-01-16,emily.williams@gmail.com,260-437-5720,Chicago,MA,4772,2025-01-02,Active,Spouse,HMO,Gold
+MEM000068,Joseph,Rodriguez,2010-09-05,joseph.rodriguez@gmail.com,260-757-4683,Indianapolis,AZ,65723,2025-11-17,Active,Self,HMO,Bronze
+MEM000069,Patricia,Garcia,1967-08-06,patricia.garcia@gmail.com,260-679-5982,New York,FL,67560,2025-11-01,Active,Self,EPO,Gold
+MEM000070,Ashley,Anderson,1992-07-22,ashley.anderson@yahoo.com,260-226-2496,Indianapolis,CA,89129,2025-11-03,2025-08-10,Child,EPO,Bronze
+MEM000071,Timothy,Perez,2000-12-23,timothy.perez@outlook.com,260-652-5557,Indianapolis,MA,8503,2025-10-23,2025-03-31,Child,PPO,Gold
+MEM000072,Ashley,Williams,1982-03-02,ashley.williams@gmail.com,260-364-6403,New York,CA,97835,2025-06-28,Active,Spouse,PPO,Gold
+MEM000073,Betty,Clark,2008-03-24,betty.clark@yahoo.com,260-318-7622,Phoenix,CA,43082,2025-10-09,2025-02-15,Self,EPO,Gold
+MEM000074,Sandra,Wilson,1944-11-11,sandra.wilson@gmail.com,260-408-5375,Phoenix,MA,7243,2025-04-07,Active,Self,PPO,Silver
+MEM000075,Brian,Thomas,1950-11-22,,260-764-1224,Phoenix,AZ,30758,2025-01-15,Active,Spouse,HMO,Bronze
+MEM000076,Linda,Anderson,1950-07-16,linda.anderson@outlook.com,260-922-5479,New York,MA,4782,2025-11-28,Active,Spouse,PPO,Bronze
+MEM000077,Sandra,Moore,1994-06-03,sandra.moore@gmail.com,260-482-7798,Chicago,CT,2237,2025-07-16,Active,Child,PPO,Bronze
+MEM000078,Charles,White,1966-10-14,charles.white@yahoo.com,260-751-8935,Chicago,MA,2435,2025-10-28,Active,Self,EPO,Gold
+MEM000079,Matthew,Anderson,1968-11-13,matthew.anderson@yahoo.com,260-439-7730,Fort Wayne,AZ,84946,2025-04-07,Active,Self,EPO,Silver
+MEM000080,Amanda,Sanchez,1974-03-15,amanda.sanchez@gmail.com,260-329-9229,Phoenix,TX,74923,2025-07-17,Active,Self,HMO,Silver
+MEM000081,Michael,Taylor,,michael.taylor@gmail.com,260-680-5342,Chicago,NY,2530,2025-01-08,Active,Child,EPO,Silver
+MEM000082,Dorothy,Williams,1969-06-23,dorothy.williams@outlook.com,260-935-8994,Phoenix,NY,5189,2025-12-12,Active,Self,EPO,Bronze
+MEM000083,Jessica,Lee,2001-05-26,jessica.lee@gmail.com,260-978-2646,New York,IL,66881,2025-05-28,Active,Self,EPO,Silver
+MEM000084,Mary,Johnson,1994-08-13,mary.johnson@gmail.com,260-450-9702,New York,CA,66450,2025-01-29,Active,Child,EPO,Bronze
+MEM000085,William,Garcia,1947-01-31,william.garcia@outlook.com,260-346-4804,New York,AZ,75230,2025-11-09,Active,Self,PPO,Silver
+MEM000086,Kevin,Smith,1981-09-27,kevin.smith@yahoo.com,260-553-5901,New York,TX,19681,2025-05-28,Active,Self,PPO,Silver
+MEM000087,Richard,Gonzalez,1983-05-08,richard.gonzalez@yahoo.com,260-916-5837,Fort Wayne,CA,85341,2025-02-24,Active,Spouse,PPO,Bronze
+MEM000088,Andrew,Perez,2009-10-28,andrew.perez@gmail.com,260-821-6772,Indianapolis,MA,4690,2025-01-26,Active,Self,EPO,Silver
+MEM000089,Carol,Harris,2004-09-04,,260-842-1645,Chicago,TX,92345,2025-12-04,Active,Spouse,HMO,Gold
+MEM000090,Lisa,White,1951-10-16,lisa.white@gmail.com,260-405-3165,Phoenix,CA,64460,2025-02-16,Active,Self,EPO,Gold
+MEM000091,Sarah,Clark,1954-10-05,sarah.clark@outlook.com,,New York,MA,4836,2025-05-12,Active,Self,HMO,Bronze
+MEM000092,Carol,White,1994-02-08,carol.white@gmail.com,260-604-1228,Chicago,CT,5993,2025-07-23,Active,Child,HMO,Silver
+MEM000093,Lisa,Perez,2007-03-13,lisa.perez@gmail.com,260-891-4830,New York,NY,6087,2025-12-11,Active,Self,EPO,Gold
+MEM000094,Christopher,Martin,1959-11-10,christopher.martin@yahoo.com,,Fort Wayne,FL,95097,2025-11-28,2025-08-26,Self,PPO,Silver
+MEM000095,Linda,Brown,1996-09-02,linda.brown@outlook.com,,New York,CA,97881,2025-10-03,2025-08-21,Child,EPO,Gold
+MEM000096,Elizabeth,Wilson,1998-10-03,elizabeth.wilson@gmail.com,260-906-7070,Indianapolis,NY,4584,2025-02-20,Active,Spouse,PPO,Bronze
+MEM000097,Lisa,Brown,2001-07-07,lisa.brown@yahoo.com,260-482-4109,Fort Wayne,CA,17936,2025-07-08,Active,Spouse,HMO,Gold
+MEM000098,Susan,Lee,1995-05-09,susan.lee@gmail.com,260-328-4362,Fort Wayne,IN,53713,2025-11-02,Active,Child,HMO,Gold
+MEM000099,Susan,Clark,1960-11-25,susan.clark@gmail.com,260-333-9850,Chicago,IN,46342,2025-06-18,Active,Self,HMO,Gold
+MEM000100,Mary,Jones,1941-05-01,mary.jones@yahoo.com,260-216-3854,Chicago,AZ,87182,2025-07-03,Active,Self,HMO,Gold
+MEM000101,Anthony,Taylor,1950-03-13,anthony.taylor@outlook.com,260-311-8405,Phoenix,CA,77271,2025-02-02,Active,Self,EPO,Bronze
+MEM000102,George,Sanchez,1999-02-10,george.sanchez@yahoo.com,260-611-7984,Fort Wayne,IN,17972,2025-09-24,Active,Spouse,EPO,Silver
+MEM000103,John,Williams,1968-11-23,john.williams@outlook.com,260-799-9984,Chicago,FL,91830,2025-11-08,2025-03-06,Spouse,EPO,Gold
+MEM000104,Charles,Anderson,1985-05-09,charles.anderson@outlook.com,260-987-4522,New York,IL,95814,2025-11-06,Active,Spouse,HMO,Silver
+MEM000105,Nancy,Clark,1980-09-07,nancy.clark@yahoo.com,260-520-5176,Chicago,IL,50966,2025-07-24,Active,Self,EPO,Silver
+MEM000106,John,Williams,1947-08-29,john.williams@outlook.com,260-261-6400,Fort Wayne,CA,27054,2025-02-17,Active,Spouse,PPO,Gold
+MEM000107,Timothy,Wilson,2004-09-08,timothy.wilson@gmail.com,260-791-9313,Indianapolis,FL,56090,2025-01-27,Active,Self,EPO,Silver
+MEM000108,Joseph,Brown,1971-05-30,joseph.brown@gmail.com,260-639-1430,Phoenix,FL,85248,2025-10-12,Active,Self,HMO,Bronze
+MEM000109,Sarah,Thompson,2008-05-25,sarah.thompson@gmail.com,260-346-7566,Fort Wayne,CA,10800,2025-06-08,Active,Self,EPO,Gold
+MEM000110,Mary,Williams,2006-12-08,mary.williams@yahoo.com,260-361-7062,Chicago,NY,7433,2025-09-29,Active,Self,EPO,Gold
+MEM000111,Jennifer,Johnson,1953-12-16,jennifer.johnson@gmail.com,260-478-8259,New York,IN,98338,2025-03-22,Active,Spouse,EPO,Silver
+MEM000112,Anthony,Rodriguez,1959-05-04,anthony.rodriguez@outlook.com,260-894-8972,Phoenix,IL,47125,2025-09-20,2025-08-09,Self,HMO,Bronze
+MEM000113,Betty,Martin,1944-11-30,betty.martin@yahoo.com,260-496-6375,Fort Wayne,AZ,27987,2025-01-04,Active,Self,PPO,Gold
+MEM000114,Margaret,Garcia,1951-08-04,margaret.garcia@outlook.com,260-884-6802,Fort Wayne,AZ,75570,2025-07-14,Active,Spouse,EPO,Bronze
+MEM000115,Margaret,Smith,1981-03-31,margaret.smith@yahoo.com,260-926-7843,Chicago,NY,9395,2025-02-09,Active,Self,PPO,Bronze
+MEM000116,Christopher,Garcia,1993-01-02,christopher.garcia@yahoo.com,260-308-4986,New York,CA,21551,2025-08-24,Active,Child,PPO,Gold
+MEM000117,Jennifer,Gonzalez,1998-09-21,jennifer.gonzalez@outlook.com,260-848-2868,Phoenix,TX,20011,2025-06-23,Active,Child,HMO,Silver
+MEM000118,Daniel,White,1997-11-26,daniel.white@gmail.com,260-377-3504,Fort Wayne,TX,43550,2025-03-17,Active,Self,EPO,Silver
+MEM000119,Sandra,Harris,1990-07-29,sandra.harris@yahoo.com,260-354-8205,Fort Wayne,CA,92210,2025-10-24,Active,Spouse,PPO,Gold
+MEM000120,Karen,Sanchez,1964-08-22,karen.sanchez@yahoo.com,260-662-1616,Fort Wayne,IL,50685,2025-10-30,2025-09-17,Self,PPO,Bronze
+MEM000121,Dorothy,Williams,1991-05-28,dorothy.williams@outlook.com,260-956-1672,New York,MA,9509,2025-11-01,Active,Child,EPO,Bronze
+MEM000122,Christopher,Martin,1982-09-02,christopher.martin@gmail.com,260-551-2381,Phoenix,IN,69050,2025-09-14,Active,Self,HMO,Bronze
+MEM000123,Amanda,Anderson,1979-06-03,amanda.anderson@yahoo.com,260-489-7347,New York,TX,57696,2025-09-26,Active,Self,EPO,Gold
+MEM000124,Patricia,Sanchez,1996-08-06,patricia.sanchez@outlook.com,260-894-7333,Chicago,CA,22387,2025-11-28,Active,Self,EPO,Gold
+MEM000125,Joshua,Jones,2003-04-14,joshua.jones@yahoo.com,260-871-7421,Indianapolis,TX,55851,2025-02-11,Active,Child,EPO,Bronze
+MEM000126,Karen,Moore,1973-10-17,karen.moore@outlook.com,260-956-9624,Fort Wayne,TX,97833,2025-11-26,Active,Spouse,EPO,Silver
+MEM000127,Mary,Lopez,1967-09-16,mary.lopez@gmail.com,260-431-3253,Indianapolis,CA,73736,2025-04-03,Active,Self,PPO,Bronze
+MEM000128,Steven,Harris,1994-06-05,steven.harris@yahoo.com,260-357-3658,Indianapolis,TX,88282,2025-09-27,Active,Child,HMO,Gold
+MEM000129,Mark,Johnson,1998-09-18,mark.johnson@outlook.com,260-491-8355,Indianapolis,AZ,68222,2025-07-06,Active,Child,HMO,Silver
+MEM000130,Donald,Clark,2001-11-02,donald.clark@yahoo.com,260-996-7256,Phoenix,MA,7565,2025-07-08,Active,Child,PPO,Bronze
+MEM000131,Richard,Sanchez,,richard.sanchez@yahoo.com,260-580-2680,Phoenix,IN,94040,2025-03-12,Active,Self,PPO,Bronze
+MEM000132,Timothy,Garcia,1964-06-21,timothy.garcia@gmail.com,260-427-8391,Chicago,TX,67340,2025-08-19,Active,Self,PPO,Bronze
+MEM000133,Betty,Taylor,1973-07-19,betty.taylor@gmail.com,260-228-6221,Fort Wayne,IL,59140,2025-05-01,Active,Self,HMO,Bronze
+MEM000134,Robert,Martinez,1982-05-21,,260-205-2298,Fort Wayne,MA,7350,2025-12-23,Active,Self,HMO,Bronze
+MEM000135,Emily,White,1994-08-16,emily.white@yahoo.com,260-324-1782,Indianapolis,FL,41147,2025-09-28,Active,Spouse,EPO,Gold
+MEM000136,Sandra,Williams,1949-12-11,sandra.williams@outlook.com,260-788-4963,Indianapolis,IN,92831,2025-09-13,Active,Self,PPO,Bronze
+MEM000137,Michelle,Lopez,2003-03-02,michelle.lopez@yahoo.com,260-269-9618,Phoenix,IL,78614,2025-10-20,Active,Child,EPO,Gold
+MEM000138,Mary,Gonzalez,1982-03-06,mary.gonzalez@outlook.com,260-216-6850,Fort Wayne,CA,43246,2025-01-23,Active,Self,HMO,Gold
+MEM000139,Kevin,Lee,1949-04-19,kevin.lee@gmail.com,260-560-9945,Chicago,CA,27486,2025-10-25,Active,Self,EPO,Silver
+MEM000140,Brian,Thomas,1996-09-03,brian.thomas@gmail.com,260-500-4302,Fort Wayne,IL,69988,2025-04-04,Active,Self,HMO,Silver
+MEM000141,Karen,Taylor,1975-09-23,karen.taylor@gmail.com,260-492-6848,Fort Wayne,IN,94790,2025-10-06,Active,Self,PPO,Bronze
+MEM000020,Lisa,Wilson,,lisa.wilson@gmail.com,260-708-9151,Chicago,NY,5555,2025-08-14,Active,Child,PPO,Bronze
+MEM000143,George,Wilson,1947-01-30,george.wilson@yahoo.com,260-528-2680,Fort Wayne,TX,81496,2025-08-09,Active,Self,EPO,Silver
+MEM000144,Karen,Anderson,1994-01-23,karen.anderson@yahoo.com,260-243-6776,Phoenix,MA,5760,2025-08-07,Active,Spouse,PPO,Gold
+MEM000145,Patricia,Williams,2000-03-19,patricia.williams@gmail.com,260-346-8179,Fort Wayne,CT,2622,2025-11-23,Active,Self,HMO,Bronze
+MEM000146,Dorothy,Lopez,1972-06-27,dorothy.lopez@gmail.com,260-895-8371,Chicago,IN,89310,2025-07-16,Active,Self,PPO,Bronze
+MEM000147,Andrew,Jones,1997-01-11,andrew.jones@gmail.com,260-226-4048,New York,FL,42717,2025-07-07,Active,Child,PPO,Gold
+MEM000148,Linda,Rodriguez,2009-07-11,,,Indianapolis,AZ,90199,2025-05-14,Active,Self,HMO,Bronze
+MEM000149,Mark,Garcia,1998-03-16,mark.garcia@yahoo.com,260-926-2063,Phoenix,CA,97535,2025-08-16,Active,Child,PPO,Silver
+MEM000150,William,Thompson,2003-08-28,william.thompson@gmail.com,260-324-4292,Indianapolis,CA,76683,2025-12-25,Active,Self,PPO,Bronze
+MEM000151,Lisa,Moore,1991-05-05,lisa.moore@outlook.com,260-288-2077,Chicago,CT,2127,2025-07-08,Active,Spouse,EPO,Gold
+MEM000152,Donald,Taylor,,donald.taylor@yahoo.com,260-857-2215,New York,IL,26426,2025-07-29,Active,Spouse,EPO,Gold
+MEM000153,Daniel,Jones,1997-11-23,daniel.jones@yahoo.com,260-714-1907,Fort Wayne,TX,26912,2025-10-10,Active,Child,HMO,Silver
+MEM000154,William,Garcia,1968-12-11,william.garcia@gmail.com,260-456-4216,Phoenix,CT,4654,2025-12-30,Active,Self,HMO,Gold
+MEM000155,Karen,Martin,1991-11-26,,260-357-3804,Phoenix,TX,87569,2025-02-17,Active,Child,PPO,Gold
+MEM000156,Robert,Clark,1942-07-18,robert.clark@gmail.com,260-985-7825,Phoenix,FL,95344,2025-02-11,Active,Self,PPO,Gold
+MEM000157,Paul,Martinez,1997-08-03,paul.martinez@yahoo.com,260-274-1981,Indianapolis,NY,4874,2025-06-04,Active,Spouse,PPO,Silver
+MEM000158,Sandra,Miller,1990-02-06,,260-978-7070,Phoenix,CA,62260,2025-11-07,2025-06-13,Child,HMO,Silver
+MEM000159,Jessica,Anderson,1950-12-28,jessica.anderson@gmail.com,260-497-7293,Phoenix,TX,22689,2025-05-17,Active,Spouse,HMO,Bronze
+MEM000160,Christopher,Jackson,2004-09-10,christopher.jackson@outlook.com,260-678-9171,Chicago,TX,75308,2025-06-10,Active,Spouse,HMO,Bronze
+MEM000161,Betty,Taylor,,betty.taylor@gmail.com,260-488-9108,Phoenix,CA,16377,2025-05-04,Active,Spouse,PPO,Gold
+MEM000162,James,Brown,1997-01-09,james.brown@yahoo.com,260-246-7563,Fort Wayne,CA,62855,2025-03-10,Active,Child,EPO,Bronze
+MEM000089,Lisa,Moore,1965-11-21,lisa.moore@yahoo.com,,Indianapolis,MA,9009,2025-02-07,Active,Self,PPO,Silver
+MEM000164,Nancy,Moore,1972-10-19,nancy.moore@outlook.com,260-241-1742,Fort Wayne,CT,6577,2025-03-15,Active,Self,EPO,Silver
+MEM000165,Donald,Taylor,1980-12-30,donald.taylor@yahoo.com,260-827-6218,Indianapolis,CT,2291,2025-03-18,Active,Spouse,EPO,Gold
+MEM000166,Karen,Jackson,1970-03-06,karen.jackson@outlook.com,260-776-5911,New York,CT,8026,2025-09-17,Active,Self,PPO,Silver
+MEM000167,Carol,Brown,1999-05-20,carol.brown@yahoo.com,260-471-4728,Fort Wayne,IN,88238,2025-10-26,Active,Child,PPO,Bronze
+MEM000168,Kimberly,Lee,2004-09-12,kimberly.lee@outlook.com,260-448-1517,Phoenix,NY,2422,2025-11-14,Active,Self,HMO,Bronze
+MEM000169,Mark,Hernandez,1977-07-27,mark.hernandez@outlook.com,260-993-8726,Fort Wayne,AZ,63788,2025-03-19,Active,Self,EPO,Bronze
+MEM000170,Emily,Hernandez,1999-05-30,emily.hernandez@yahoo.com,260-745-6608,Phoenix,CA,32699,2025-09-02,Active,Self,EPO,Gold
+MEM000171,Carol,Lee,2002-03-14,carol.lee@yahoo.com,260-771-5890,Indianapolis,AZ,42311,2025-05-16,Active,Self,PPO,Gold
+MEM000172,Susan,Thompson,2000-01-31,susan.thompson@outlook.com,260-480-5715,Fort Wayne,CA,83464,2025-09-08,Active,Child,EPO,Gold
+MEM000173,Matthew,Gonzalez,1970-12-18,matthew.gonzalez@yahoo.com,260-652-5201,New York,FL,20358,2025-03-16,Active,Self,HMO,Gold
+MEM000174,Sarah,Moore,2002-06-16,sarah.moore@gmail.com,260-885-9700,Indianapolis,AZ,41779,2025-05-20,2025-11-12,Self,HMO,Bronze
+MEM000175,Anthony,Hernandez,2004-05-10,anthony.hernandez@gmail.com,260-616-8793,New York,IN,82135,2025-08-30,2025-03-12,Self,PPO,Silver
+MEM000176,Charles,Lee,1945-04-22,,260-940-1611,Indianapolis,AZ,80143,2025-02-15,Active,Spouse,HMO,Bronze
+MEM000177,Betty,Sanchez,1984-06-10,betty.sanchez@gmail.com,260-505-2758,Chicago,FL,14910,2025-04-06,Active,Self,PPO,Gold
+MEM000178,Paul,Taylor,1984-04-23,paul.taylor@gmail.com,260-315-6417,Indianapolis,MA,4471,2025-03-10,Active,Spouse,EPO,Silver
+MEM000058,Amanda,Garcia,,amanda.garcia@outlook.com,260-854-7643,New York,AZ,33002,2025-06-22,Active,Child,PPO,Bronze
+MEM000180,Betty,Perez,1948-07-22,betty.perez@gmail.com,260-206-5272,New York,MA,5302,2025-04-05,Active,Self,PPO,Silver
+MEM000181,Nancy,Martinez,1992-04-03,nancy.martinez@gmail.com,260-883-2936,New York,CA,40972,2025-10-21,2025-12-01,Self,HMO,Silver
+MEM000182,Carol,Taylor,2003-02-13,carol.taylor@outlook.com,260-426-4590,Indianapolis,FL,58174,2025-06-09,Active,Spouse,HMO,Silver
+MEM000183,Melissa,Martin,1973-07-08,melissa.martin@outlook.com,260-423-5054,Phoenix,MA,8807,2025-08-01,Active,Self,EPO,Silver
+MEM000184,Kimberly,Thompson,1993-11-14,kimberly.thompson@outlook.com,260-717-4312,Phoenix,IL,18094,2025-02-09,Active,Child,HMO,Bronze
+MEM000185,Christopher,Taylor,1979-08-22,christopher.taylor@outlook.com,260-656-1911,New York,MA,1490,2025-03-01,Active,Self,EPO,Silver
+MEM000186,Sandra,Jackson,1993-03-04,sandra.jackson@yahoo.com,260-460-1049,Indianapolis,FL,12853,2025-10-14,Active,Child,HMO,Bronze
+MEM000187,Margaret,Lopez,2002-11-01,margaret.lopez@yahoo.com,260-232-5703,New York,IN,19046,2025-02-02,Active,Self,HMO,Gold
+MEM000188,George,Lee,1977-09-17,george.lee@yahoo.com,260-584-2314,Phoenix,NY,7349,2025-07-11,Active,Self,EPO,Silver
+MEM000189,Linda,Garcia,1988-03-13,linda.garcia@gmail.com,260-505-8585,Phoenix,AZ,10455,2025-07-21,Active,Spouse,EPO,Silver
+MEM000190,Joseph,Davis,1981-04-28,joseph.davis@gmail.com,260-876-7868,Phoenix,AZ,24790,2025-06-27,Active,Self,HMO,Bronze
+MEM000191,John,Brown,1993-04-14,john.brown@outlook.com,260-245-7590,New York,IN,42077,2025-01-18,Active,Self,EPO,Bronze
+MEM000192,Timothy,Harris,1999-08-20,timothy.harris@outlook.com,260-789-6224,Phoenix,FL,40692,2025-03-13,Active,Child,EPO,Silver
+MEM000193,Jessica,Martinez,2000-04-06,jessica.martinez@yahoo.com,260-262-3869,New York,NY,4924,2025-12-05,Active,Child,PPO,Bronze
+MEM000194,Daniel,Lee,2000-03-24,daniel.lee@yahoo.com,260-352-5913,New York,CA,64568,2025-07-15,Active,Self,EPO,Silver
+MEM000195,Jessica,Davis,1966-12-24,jessica.davis@yahoo.com,260-626-9683,Indianapolis,IN,83713,2025-12-29,2025-08-26,Spouse,HMO,Silver
+MEM000083,Susan,Hernandez,1998-01-07,susan.hernandez@outlook.com,260-941-4120,Fort Wayne,CA,22119,2025-02-10,Active,Self,PPO,Gold
+MEM000197,Joshua,Martin,1943-07-19,joshua.martin@yahoo.com,260-413-6455,Chicago,CT,3556,2025-02-07,Active,Self,HMO,Bronze
+MEM000198,Melissa,Brown,2007-01-02,melissa.brown@gmail.com,260-765-6269,Chicago,AZ,61987,2025-09-03,Active,Spouse,PPO,Gold
+MEM000199,Dorothy,Lopez,1967-09-02,dorothy.lopez@gmail.com,260-939-8692,Chicago,MA,7636,2025-05-14,Active,Self,PPO,Silver
+MEM000200,Anthony,Johnson,1990-06-19,anthony.johnson@outlook.com,260-798-7841,Chicago,IN,44180,2025-04-24,Active,Self,HMO,Silver
+MEM000201,Joseph,Gonzalez,1991-02-12,joseph.gonzalez@yahoo.com,260-940-9037,New York,CA,43728,2025-05-06,Active,Self,EPO,Silver
+MEM000202,William,Jones,2004-08-15,william.jones@outlook.com,260-234-2217,Fort Wayne,CT,963,2025-10-07,Active,Self,PPO,Bronze
+MEM000203,Kenneth,Davis,2003-05-23,kenneth.davis@yahoo.com,260-582-1990,Phoenix,AZ,76287,2025-12-29,Active,Child,PPO,Gold
+MEM000035,Ashley,Smith,1940-08-04,ashley.smith@outlook.com,260-939-5501,Phoenix,IN,12192,2025-09-30,Active,Self,HMO,Gold
+MEM000205,Brian,Perez,1978-08-18,brian.perez@gmail.com,260-396-9625,Chicago,CT,2440,2025-04-02,2025-02-19,Self,PPO,Silver
+MEM000206,Jennifer,Lopez,1976-06-04,jennifer.lopez@outlook.com,260-282-1519,Fort Wayne,AZ,49318,2025-08-24,Active,Spouse,PPO,Silver
+MEM000207,Emily,Thomas,1945-01-12,emily.thomas@yahoo.com,260-860-6427,Phoenix,IL,75517,2025-11-23,2025-03-29,Self,EPO,Bronze
+MEM000208,Joseph,Miller,2002-02-08,joseph.miller@outlook.com,260-487-9897,Phoenix,IN,19744,2025-10-18,Active,Self,HMO,Silver
+MEM000209,Mary,Miller,1992-08-30,mary.miller@yahoo.com,260-366-4939,Phoenix,NY,1261,2025-03-15,Active,Spouse,EPO,Gold
+MEM000210,Nancy,Gonzalez,2007-10-15,nancy.gonzalez@outlook.com,260-554-1879,Fort Wayne,IL,75639,2025-03-13,Active,Spouse,HMO,Bronze
+MEM000211,Nancy,Martin,2008-12-27,nancy.martin@gmail.com,260-849-5478,New York,NY,5348,2025-11-11,Active,Spouse,HMO,Silver
+MEM000212,Emily,Gonzalez,1978-09-28,emily.gonzalez@outlook.com,260-502-5037,Fort Wayne,NY,1405,2025-04-06,Active,Self,PPO,Bronze
+MEM000213,Matthew,Thompson,2010-04-29,matthew.thompson@yahoo.com,260-309-2499,Fort Wayne,NY,5189,2025-11-21,Active,Self,PPO,Silver
+MEM000214,Timothy,Rodriguez,1949-03-03,timothy.rodriguez@outlook.com,260-724-7685,Fort Wayne,MA,9126,2025-03-09,2025-08-09,Self,HMO,Silver
+MEM000215,Emily,Williams,1992-08-16,emily.williams@yahoo.com,260-623-7353,Fort Wayne,NY,203,2025-11-03,Active,Child,HMO,Gold
+MEM000216,Kimberly,Garcia,2001-06-25,kimberly.garcia@yahoo.com,260-704-3390,Fort Wayne,FL,49469,2025-07-14,Active,Self,PPO,Silver
+MEM000217,Anthony,Martinez,1983-06-11,anthony.martinez@yahoo.com,260-808-4203,New York,AZ,91924,2025-02-09,Active,Self,HMO,Silver
+MEM000218,James,Gonzalez,1969-10-21,james.gonzalez@yahoo.com,260-640-3230,Chicago,CA,67700,2025-11-14,Active,Self,EPO,Gold
+MEM000219,Richard,Thomas,1968-03-09,richard.thomas@outlook.com,260-911-9044,Phoenix,CA,48200,2025-04-01,Active,Self,PPO,Silver
+MEM000220,Sarah,Clark,2010-07-03,sarah.clark@outlook.com,260-384-1440,New York,AZ,87624,2025-07-21,Active,Self,PPO,Silver
+MEM000221,Brian,Williams,1976-09-14,brian.williams@yahoo.com,260-874-3525,New York,FL,41722,2025-12-11,Active,Spouse,HMO,Silver
+MEM000222,Joshua,Thomas,1992-03-26,joshua.thomas@gmail.com,,Phoenix,NY,8908,2025-07-25,Active,Self,HMO,Bronze
+MEM000223,Kevin,Perez,1971-11-06,kevin.perez@outlook.com,260-893-7547,Chicago,IN,83822,2025-03-27,Active,Spouse,HMO,Bronze
+MEM000224,Michael,Rodriguez,1959-12-01,michael.rodriguez@outlook.com,260-789-4621,New York,CT,9512,2025-09-19,Active,Self,PPO,Silver
+MEM000225,Carol,Jackson,2001-12-10,carol.jackson@gmail.com,260-502-7815,Fort Wayne,IN,73277,2025-09-14,Active,Self,EPO,Bronze
+MEM000226,Daniel,Martinez,1970-10-11,daniel.martinez@yahoo.com,260-687-2599,New York,CT,7913,2025-08-22,Active,Spouse,PPO,Bronze
+MEM000227,Karen,Johnson,2003-10-07,,260-958-4996,Phoenix,IL,98754,2025-02-28,2025-06-25,Self,EPO,Bronze
+MEM000228,Nancy,Moore,1978-04-02,nancy.moore@gmail.com,260-855-8080,New York,NY,3023,2025-08-25,Active,Self,EPO,Gold
