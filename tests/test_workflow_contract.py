@@ -124,6 +124,17 @@ def test_python_jobs_use_scoped_critical_static_gates() -> None:
         assert "--max-line-length" not in commands
 
 
+def test_dashboard_tests_import_from_repository_root() -> None:
+    app_job = load_workflow()["jobs"]["app-test"]
+    commands = "\n".join(
+        step.get("run", "")
+        for step in app_job["steps"]
+        if isinstance(step, dict)
+    )
+    assert "pip install -r streaming/producers/requirements.txt" in commands
+    assert "PYTHONPATH=. pytest app/dashboard/tests/ -v --tb=short" in commands
+
+
 def test_docker_job_builds_without_credentials_or_publishing() -> None:
     docker_job = load_workflow()["jobs"]["docker"]
     assert "if" not in docker_job

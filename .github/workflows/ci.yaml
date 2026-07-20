@@ -269,6 +269,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
+          pip install -r streaming/producers/requirements.txt
           pip install -r governance/requirements.txt
           pip install flake8 pytest
 
@@ -278,7 +279,7 @@ jobs:
           flake8 app/ --select=E9,F63,F7,F82
 
       - name: Unit tests (data accessors, with mocked streamlit)
-        run: pytest app/dashboard/tests/ -v --tb=short
+        run: PYTHONPATH=. pytest app/dashboard/tests/ -v --tb=short
 
       - name: Verify Prefect flow imports cleanly
         run: |
