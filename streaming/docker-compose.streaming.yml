@@ -21,8 +21,8 @@ services:
       - --check=false
       - --mode=dev-container
     ports:
-      - "9092:9092"
-      - "9644:9644"
+      - "127.0.0.1:9092:9092"
+      - "127.0.0.1:9644:9644"
     healthcheck:
       test: ["CMD", "rpk", "cluster", "info"]
       interval: 5s
@@ -30,7 +30,8 @@ services:
       retries: 10
 
   redpanda-console:
-    image: docker.redpanda.com/redpandadata/console:latest
+    # Redpanda Console v2.3.8 multi-platform index, pinned by immutable digest.
+    image: docker.io/redpandadata/console@sha256:825ef1b5979f51d7d02eccc275250425c86fa3b4f28a013dbb1a2639bfa663d1
     container_name: healthcare-redpanda-console
     depends_on:
       redpanda:
@@ -38,5 +39,5 @@ services:
     environment:
       KAFKA_BROKERS: redpanda:9092
     ports:
-      - "8081:8080"
+      - "127.0.0.1:8081:8080"
     restart: unless-stopped
