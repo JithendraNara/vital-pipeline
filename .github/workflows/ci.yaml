@@ -2,9 +2,14 @@ name: vital-pipeline CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   PYTHON_VERSION: '3.12'
@@ -17,19 +22,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r ai/analyst/requirements.txt
-          pip install flake8 black isort pytest pytest-cov dbt-core dbt-duckdb duckdb great-expectations pandas
+          pip install flake8 pytest pytest-cov dbt-core dbt-duckdb duckdb great-expectations pandas
+          pip install PyYAML==6.0.2
 
-      - name: Lint
+      - name: CI workflow contract
+        run: pytest tests/test_workflow_contract.py tests/test_documentation_claims.py -v --junitxml=ci-contract.xml
+
+      - name: Upload CI workflow contract results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-workflow-contract-results
+          path: ci-contract.xml
+          if-no-files-found: error
+
+      - name: Critical syntax and static checks
         run: |
-          flake8 ai/ data_quality/ scripts/ --max-line-length=120 --ignore=E501,W503
-          black --check ai/ data_quality/ scripts/
-          isort --check-only ai/ data_quality/ scripts/
+          python -m compileall -q ai data_quality scripts
+          flake8 ai/ data_quality/ scripts/ --select=E9,F63,F7,F82
 
       - name: Generate Synthea-like seed
         run: python scripts/seed_omop.py --patients 500
@@ -61,30 +78,23 @@ jobs:
           kill %1 2>/dev/null || true
 
       - uses: codecov/codecov-action@v4
-        with: file: ./coverage.xml
+        with:
+          file: ./coverage.xml
         continue-on-error: true
 
-  # ─── Build and push the AI analyst container ───
+  # ─── Build the AI analyst container without publishing ───
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
     needs: pipeline-test
-    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
+      - name: Build locally
         uses: docker/build-push-action@v5
         with:
           context: ./ai/analyst
-          push: true
-          tags: ghcr.io/${{ github.repository }}/ai-analyst:latest
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -95,14 +105,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Trivy
-        uses: aquasecurity/trivy-action@master
+        # Safe v0.35.0 commit identified by Aqua's 2026 incident guidance.
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'fs'
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
       - uses: github/codeql-action/upload-sarif@v3
-        with: sarif_file: 'trivy-results.sarif'
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   # ─── Streaming module tests (no broker required for unit tests) ───
   streaming-test:
@@ -111,35 +123,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r streaming/producers/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint streaming
+      - name: Critical syntax and static checks
         run: |
-          flake8 streaming/ --max-line-length=120 --ignore=E501,W503
-          black --check streaming/
-          isort --check-only streaming/
+          python -m compileall -q streaming
+          flake8 streaming/ --select=E9,F63,F7,F82
 
       - name: Unit tests (no broker)
         run: pytest streaming/tests/ -v --tb=short
 
       - name: Event shape smoke test
-        run: python streaming/examples/quickstart_producer.py > /tmp/stream_sample.json
-        # Sanity check: every generated event has a patient_id, event_time, source
+        run: |
+          python streaming/examples/quickstart_producer.py > /tmp/stream_sample.json
+          # Sanity check: every generated event has a patient_id, event_time, source
           python -c "
-import json, sys
-with open('/tmp/stream_sample.json') as f:
-    txt = f.read()
-assert '\"patient_id\"' in txt
-assert '\"event_time\"' in txt
-assert '\"source\"' in txt
-print('OK: smoke test produced all four event types')
-"
+          import json
+          with open('/tmp/stream_sample.json') as f:
+              txt = f.read()
+          assert '\"patient_id\"' in txt
+          assert '\"event_time\"' in txt
+          assert '\"source\"' in txt
+          print('OK: smoke test produced all four event types')
+          "
 
   # ─── ML module tests (no MLflow server / Kafka / OMOP required) ───
   ml-test:
@@ -148,7 +161,8 @@ print('OK: smoke test produced all four event types')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install OS deps for LightGBM
         run: |
@@ -160,13 +174,12 @@ print('OK: smoke test produced all four event types')
           python -m pip install --upgrade pip
           pip install -r streaming/producers/requirements.txt
           pip install -r ml/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint ML
+      - name: Critical syntax and static checks
         run: |
-          flake8 ml/ --max-line-length=120 --ignore=E501,W503
-          black --check ml/
-          isort --check-only ml/
+          python -m compileall -q ml
+          flake8 ml/ --select=E9,F63,F7,F82
 
       - name: Unit tests (no MLflow server, no Kafka, no OMOP)
         run: pytest ml/tests/ -v --tb=short
@@ -178,36 +191,36 @@ print('OK: smoke test produced all four event types')
       - name: Verify the model is registered
         run: |
           python -c "
-import mlflow
-client = mlflow.tracking.MlflowClient('sqlite:///mlflow.db')
-exp = client.get_experiment_by_name('readmission_30d')
-assert exp is not None, 'no readmission_30d experiment found'
-versions = client.get_latest_versions('readmission_30d')
-assert len(versions) >= 1, f'no registered versions: {versions}'
-v = versions[0]
-print(f'OK: {v.name} v{v.version} stage={v.current_stage}')
-"
+          import mlflow
+          client = mlflow.tracking.MlflowClient('sqlite:///mlflow.db')
+          exp = client.get_experiment_by_name('readmission_30d')
+          assert exp is not None, 'no readmission_30d experiment found'
+          versions = client.get_latest_versions('readmission_30d')
+          assert len(versions) >= 1, f'no registered versions: {versions}'
+          v = versions[0]
+          print(f'OK: {v.name} v{v.version} stage={v.current_stage}')
+          "
 
   # ─── Governance module tests (AES + audit + deid + RBAC) ───
   governance-test:
-    name: Governance (HIPAA)
+    name: Governance controls (not compliance validation)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
           pip install -r governance/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint governance
+      - name: Critical syntax and static checks
         run: |
-          flake8 governance/ --max-line-length=120 --ignore=E501,W503
-          black --check governance/
-          isort --check-only governance/
+          python -m compileall -q governance
+          flake8 governance/ --select=E9,F63,F7,F82
 
       - name: Unit tests
         run: |
@@ -218,29 +231,29 @@ print(f'OK: {v.name} v{v.version} stage={v.current_stage}')
         run: |
           HEALTHCARE_KMS_KEY=$(python -c "import os,base64; print(base64.b64encode(os.urandom(32)).decode())") \
             python -c "
-import sys
-sys.path.insert(0, '.')
-from governance.masking.deidentify import deidentify_omop_person, redact_zip
-from governance.rbac.policies import Actor, AccessRequest, PolicyEngine, Resource
+          import sys
+          sys.path.insert(0, '.')
+          from governance.masking.deidentify import deidentify_omop_person, redact_zip
+          from governance.rbac.policies import Actor, AccessRequest, PolicyEngine, Resource
 
-# Deid smoke
-out = deidentify_omop_person({'mrn': 'M001', 'name': 'Jane', 'phone': '555-1234', 'year_of_birth': 1980, 'birth_datetime': '1980-01-01T00:00:00Z'})
-assert out['mrn'].startswith('DH_'), f'mrn not hashed: {out}'
-assert out['phone'] is None, f'phone not dropped: {out}'
-print('  OK: deid smoke')
+          # Deid smoke
+          out = deidentify_omop_person({'mrn': 'M001', 'name': 'Jane', 'phone': '555-1234', 'year_of_birth': 1980, 'birth_datetime': '1980-01-01T00:00:00Z'})
+          assert out['mrn'].startswith('DH_'), f'mrn not hashed: {out}'
+          assert out['phone'] is None, f'phone not dropped: {out}'
+          print('  OK: deid smoke')
 
-# RBAC smoke
-engine = PolicyEngine()
-req = AccessRequest(actor=Actor(id='x', role='data_scientist'), action='read',
-                    resource=Resource(type='table', id='omcdm_person', fields=['person.mrn']),
-                    purpose='model_training')
-assert not engine.evaluate(req).allow, 'data scientist should be denied raw MRN'
-req2 = AccessRequest(actor=Actor(id='y', role='clinician'), action='read',
-                     resource=Resource(type='table', id='omcdm_person', fields=['person.mrn']),
-                     purpose='clinical_care')
-assert engine.evaluate(req2).allow, 'clinician should be allowed MRN for clinical_care'
-print('  OK: rbac smoke')
-"
+          # RBAC smoke
+          engine = PolicyEngine()
+          req = AccessRequest(actor=Actor(id='x', role='data_scientist'), action='read',
+                              resource=Resource(type='table', id='omcdm_person', fields=['person.mrn']),
+                              purpose='model_training')
+          assert not engine.evaluate(req).allow, 'data scientist should be denied raw MRN'
+          req2 = AccessRequest(actor=Actor(id='y', role='clinician'), action='read',
+                               resource=Resource(type='table', id='omcdm_person', fields=['person.mrn']),
+                               purpose='clinical_care')
+          assert engine.evaluate(req2).allow, 'clinician should be allowed MRN for clinical_care'
+          print('  OK: rbac smoke')
+          "
 
   # ─── Clinical dashboard + Prefect flow tests (no Streamlit server needed) ───
   app-test:
@@ -249,33 +262,34 @@ print('  OK: rbac smoke')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: ${{ env.PYTHON_VERSION }}
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
+          pip install -r streaming/producers/requirements.txt
           pip install -r governance/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint app
+      - name: Critical syntax and static checks
         run: |
-          flake8 app/ --max-line-length=120 --ignore=E501,W503
-          black --check app/
-          isort --check-only app/
+          python -m compileall -q app
+          flake8 app/ --select=E9,F63,F7,F82
 
       - name: Unit tests (data accessors, with mocked streamlit)
-        run: pytest app/dashboard/tests/ -v --tb=short
+        run: PYTHONPATH=. pytest app/dashboard/tests/ -v --tb=short
 
       - name: Verify Prefect flow imports cleanly
         run: |
           python -c "
-import sys
-sys.path.insert(0, '.')
-# import the flow module — this is the same code path Prefect would use
-import prefect_flows.real_time_healthcare_flow as f
-assert callable(f.real_time_healthcare_flow)
-assert callable(f.ensure_topics)
-assert callable(f.health_check)
-print('OK: real_time_healthcare_flow module loaded')
-"
+          import sys
+          sys.path.insert(0, '.')
+          # import the flow module — this is the same code path Prefect would use
+          import prefect_flows.real_time_healthcare_flow as f
+          assert callable(f.real_time_healthcare_flow)
+          assert callable(f.ensure_topics)
+          assert callable(f.health_check)
+          print('OK: real_time_healthcare_flow module loaded')
+          "

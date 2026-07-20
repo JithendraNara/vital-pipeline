@@ -1,445 +1,243 @@
 # real-time-healthcare-pipeline
 
-> **Real-time healthcare & IoT data — modernized for 2026.**
-> **Synthea + IoT → Kafka (Redpanda) → AWS Glue Streaming → Iceberg v3 → ML predictions → clinical dashboard.**
-> **HIPAA-governed. Zero-AWS local dev. Production-ready for AWS.**
+> Synthetic healthcare streaming prototype for local development.
+>
+> Generated EHR/IoT-style events → Redpanda → Pydantic validation → DuckDB
+> silver and quarantine tables, with a local ML demo and Streamlit dashboard.
 
-[![CI](https://github.com/Jithendranara/real-time-healthcare-pipeline/actions/workflows/ci.yaml/badge.svg)](https://github.com/Jithendranara/real-time-healthcare-pipeline/actions)
-[![OMOP CDM](https://img.shields.io/badge/OMOP-v5.4-blue)](https://ohdsi.github.io/CommonDataModel/)
+[![OMOP CDM](https://img.shields.io/badge/OMOP-shaped_v5.4-blue)](https://ohdsi.github.io/CommonDataModel/)
 [![Kafka](https://img.shields.io/badge/Kafka-Redpanda-black)](https://redpanda.com/)
-[![AWS Glue](https://img.shields.io/badge/AWS-Glue_Streaming-orange)](https://aws.amazon.com/glue/)
-[![Iceberg v3](https://img.shields.io/badge/Apache_Iceberg-v3-lightgrey)](https://iceberg.apache.org/)
-[![dbt Fusion](https://img.shields.io/badge/dbt-Fusion-orange)](https://www.getdbt.com/)
-[![HIPAA](https://img.shields.io/badge/HIPAA-governed-blueviolet)](#-hipaa-posture)
-[![AI Analyst](https://img.shields.io/badge/AI-MiniMax--M2-green)](https://api.minimax.chat/)
 
-A production-quality healthcare data platform combining **real-time streaming** (Kafka + AWS Glue) with the **batch OMOP warehouse** (Synthea → dbt → Iceberg) — plus a natural-language AI analyst, ML outcome models, and HIPAA-grade governance. Runs on your laptop with Docker; deploys to AWS without code changes.
+This repository demonstrates a local, synthetic data path. Event producers publish
+generated records to Redpanda, the local consumer validates them with Pydantic,
+optionally enriches them from an OMOP-shaped DuckDB database, and writes DuckDB
+silver tables. Invalid records are stored in a local `dlq_silver` quarantine table.
+The repository also contains a synthetic readmission-model demo, a dashboard, and
+standalone encryption, access-policy, audit, and masking utilities.
 
----
+## Limitations
 
-## 🏗️ Architecture
+- This project uses synthetic data only. No real patient records are included or
+  approved for use.
+- It is a portfolio prototype, not a service deployment. There is no demonstrated
+  cloud streaming sink, catalog integration, deployment run, performance benchmark,
+  recovery run, or schema-compatibility run.
+- Duplicate event behavior, consumer restart behavior, message loss, quarantine
+  routing, and end-to-end latency have not been demonstrated with a broker-backed
+  test artifact.
+- The consumer writes invalid records to a DuckDB quarantine table; it does not
+  publish them to the configured `healthcare.dlq` topic.
+- The OMOP-shaped models provide partial OMOP coverage and partial terminology
+  mappings. They are not a complete or validated OMOP implementation.
+- The readmission model is a local software demonstration. It is not clinically validated,
+  calibrated for a target population, fairness-tested, or prospectively evaluated.
+  It is not intended for diagnosis, treatment, or triage.
+- SHAP output is a model explanation, not clinical causality.
+- No throughput, latency, accuracy, patient count, or quality-check count in this
+  README should be inferred beyond the output of a run performed by the reader.
 
+## Security / Data Boundaries
+
+- The repository is not a HIPAA compliance determination, certification, or
+  independent security assessment. It includes no BAA, organizational policy set,
+  identity provider, consent workflow, or incident-response program.
+- Local Redpanda uses plaintext transport and development-only service bindings.
+  Local credentials and generated keys are disposable development values, not
+  deployment controls.
+- The governance package contains illustrative utilities. They are not integrated
+  across the producer, local consumer, model API, and dashboard data path.
+- The dashboard has no authentication and can display patient-level synthetic data.
+  Do not expose it to an untrusted network or connect it to real data.
+- In the coordinated SQL-boundary patch, `/ask` and `/plan` are disabled and the
+  remaining bounded, parameterized `/cohort` route is synthetic-only. No row-level result is sent to an external model.
+  The API remains unauthenticated; do not expose it or connect it to real data.
+- Invalid payloads are copied into the local quarantine table without redaction.
+  Use only generated data and treat the quarantine database as sensitive.
+
+## Demonstrated local architecture
+
+```text
+generated EHR/IoT-style events
+             |
+             v
+   Redpanda Kafka topics
+             |
+             v
+ Pydantic validation + optional OMOP-shaped DuckDB enrichment
+             |
+             +------ valid ------> DuckDB *_silver tables
+             |
+             +------ invalid ----> DuckDB dlq_silver quarantine table
+
+synthetic training data -> LightGBM/MLflow demo -> prediction topic/API
+                                                    |
+                                                    v
+                                        unauthenticated local dashboard
+
+Illustrative governance utilities are separate from this data path.
 ```
- ┌────────────────────────── REAL-TIME (Module 1) ─────────────────────────┐
- │                                                                         │
- │  [Synthea EHR] ─┐                                                        │
- │  [IoT devices] ─┤                                                        │
- │                  ├──▶ [Kafka / Redpanda] ──▶ [AWS Glue Streaming ETL]    │
- │  [Wearables]   ─┘                            │                          │
- │                                               ├── validate (JSON Schema)│
- │                                               ├── enrich (join OMOP)     │
- │                                               ├── transform → Iceberg    │
- │                                               └── DLQ (malformed)        │
- │                                                          │               │
- │                                                          ▼               │
- │  [ML scorer (Module 2)] ◀── silver tables ─── [Iceberg v3 silver]        │
- │         │                                                              │
- │         └────▶ healthcare.predictions topic ─────▶ [clinical dashboard] │
- └─────────────────────────────────────────────────────────────────────────┘
 
- ┌────────────────────────── BATCH (existing) ─────────────────────────────┐
- │                                                                         │
- │  [Synthea CSVs]   ─┐                                                     │
- │                    │                                                     │
- │  [Eligibility]    ─┤                                                     │
- │                    ├──▶ [dbt Fusion] ──▶ [OMOP CDM v5.4 (Iceberg/DuckDB)]│
- │  [Claims]        ─┘                          │                         │
- │                                               ├── person, condition, …   │
- │                                               └── mart_member_roster     │
- │                                                        │                │
- │                                                        ▼                │
- │                                            [AI Healthcare Analyst]      │
- │                                            FastAPI + MiniMax-M2         │
- │                                                        │                │
- │                                                        ├── /ask         │
- │                                                        ├── /plan         │
- │                                                        ├── /cohort       │
- │                                                        └── /schema       │
- └─────────────────────────────────────────────────────────────────────────┘
+See [the streaming module](streaming/README.md),
+[the ML module](ml/README.md), [the governance module](governance/README.md),
+[the dashboard module](app/dashboard/README.md), and
+[the architecture notes](docs/architecture_diagram.md) for the same boundaries.
 
-       ──── HIPAA governance (Module 3) wraps every read/write ────
-       encryption + RBAC + audit + de-identification
-```
+## Components
 
-**Four layers of data quality:**
+| Area | What is present |
+|---|---|
+| Streaming | Redpanda topic configuration, generated producers, Pydantic event models, local Kafka consumer |
+| Local storage | DuckDB silver tables and `dlq_silver` quarantine table |
+| Batch data | dbt models over generated eligibility and Synthea-like inputs, shaped around a subset of OMOP |
+| ML demo | Synthetic training CLI, LightGBM predictor, MLflow wrapper, FastAPI scorer, Kafka scorer |
+| Dashboard | Read-only Streamlit views over local DuckDB data and prediction messages |
+| Governance utilities | AES-GCM helpers, a DuckDB audit logger, Python access-policy evaluator, masking helpers, consumer wrapper |
+| Cohort API | Coordinated SQL patch disables `/ask` and `/plan`; `/cohort` uses application-owned parameterized SQL over synthetic data |
 
-1. **JSON Schema** at the Kafka boundary — reject malformed events at the door (Module 1)
-2. **Great Expectations** — column-level rules (uniqueness, regex, ranges)
-3. **OMOP row-level** — referential integrity, valid concept_ids, CCS coverage
-4. **Iceberg freshness** — snapshot age checks (replaces the old "is the pipeline running" alerts)
+## Implemented local data models
 
----
+The local dbt project is source-visible and runnable against DuckDB. It is
+OMOP-shaped rather than a complete or certified CDM implementation.
 
-## 🧱 The Stack (2026)
+- Staging: [`stg_eligibility_members.sql`](dbt_project/models/staging/stg_eligibility_members.sql)
+- Intermediate: [`int_member_months.sql`](dbt_project/models/intermediate/int_member_months.sql)
+- OMOP-shaped models: [`person`](dbt_project/models/omop/omcdm_person.sql),
+  [`condition_occurrence`](dbt_project/models/omop/omcdm_condition_occurrence.sql),
+  [`visit_occurrence`](dbt_project/models/omop/omcdm_visit_occurrence.sql),
+  [`drug_exposure`](dbt_project/models/omop/omcdm_drug_exposure.sql), and
+  [`measurement`](dbt_project/models/omop/omcdm_measurement.sql)
+- Marts: [`mart_member_roster.sql`](dbt_project/models/marts/mart_member_roster.sql),
+  [`mart_condition_drug_pairs.sql`](dbt_project/models/marts/mart_condition_drug_pairs.sql),
+  and [`mart_medication_adherence.sql`](dbt_project/models/marts/mart_medication_adherence.sql)
 
-| Layer | Technology |
-|-------|-----------|
-| **Real-time ingest** | Kafka (Redpanda locally) + AWS Glue Streaming ETL (prod) |
-| **Validation** | Confluent JSON Schema + Pydantic v2 (fail-fast at the door) |
-| **IoT sim** | Continuous device simulator (wearables, BP cuff, glucose, pill bottle) |
-| **ML scoring** | LightGBM (readmission_30d) + MLflow registry + FastAPI scorer + real-time Kafka scorer |
-| **Governance** | AES-256-GCM column encryption + append-only audit log + OPA-compatible RBAC + Safe Harbor de-identification |
-| **Dashboard** | Streamlit — live risk board, patient detail, pipeline health |
-| **Storage** | S3 + Apache Iceberg v3 (prod) / DuckDB (local) |
-| **Catalog** | AWS Glue (prod) / Iceberg REST (local) |
-| **Transform** | dbt Fusion + Python UDFs (CCS category lookup) |
-| **ML** | MLflow + scikit-learn / LightGBM / Prophet + real-time scorer (Module 2) |
-| **Orchestration** | Airflow DAG + Prefect flow (batch) + Glue Streaming (real-time) |
-| **Source** | Synthea + IoT devices / CMS SynPUF claims / Eligibility files |
-| **Quality** | JSON Schema + Great Expectations + OMOP row-level + Iceberg freshness |
-| **Governance** | AES-256-GCM encryption, OPA RBAC, append-only audit, de-identification (Module 3) |
-| **AI** | MiniMax-M2 (production) / fallback templates (local) |
-| **Local dev** | Docker Compose (MinIO + Iceberg REST + Postgres + Redpanda + AI analyst) |
+See the [data dictionary](docs/data-dictionary.md) for field descriptions. Coverage
+and terminology mappings remain partial, as stated above.
 
----
+## Contracts and quality utilities
 
-## 🚀 Quickstart (5 minutes, zero AWS)
+- [`streaming/schemas/events.py`](streaming/schemas/events.py) defines the Pydantic
+  event contracts used by the generated producers and local consumer.
+- [`data_quality/run_gx_suite.py`](data_quality/run_gx_suite.py) contains direct DuckDB/SQL column
+  checks, OMOP-shaped row-level checks, and a freshness check. Run
+  output, not a hand-maintained count, is the evidence for a particular execution.
+- [`eligibility_data_contract.yml`](data_contracts/eligibility_data_contract.yml) is
+  an example data contract for the eligibility input.
+
+## Illustrative orchestration and infrastructure source
+
+These files are useful design artifacts but are not deployment or readiness evidence:
+
+- [`pipelines/eligibility-etl/dag.py`](pipelines/eligibility-etl/dag.py) — Airflow
+  source for the eligibility flow; not demonstrated by a tracked scheduler run.
+- [`prefect_flows/real_time_healthcare_flow.py`](prefect_flows/real_time_healthcare_flow.py)
+  — incomplete local orchestration source; it is not the canonical quickstart and
+  has no bounded end-to-end proof.
+- [`infrastructure/main.tf`](infrastructure/main.tf) — incomplete, illustrative
+  Terraform source; it is not a validated deployment configuration.
+
+## Local quickstart
+
+Run commands from the repository root. These steps intentionally use generated
+data and local services.
 
 ```bash
-git clone https://github.com/Jithendranara/real-time-healthcare-pipeline.git
-cd real-time-healthcare-pipeline
-
-# 1. Install Python deps
-pip install -r ai/analyst/requirements.txt
+# Install the local batch and streaming dependencies.
 pip install -r streaming/producers/requirements.txt
-pip install dbt-core dbt-duckdb duckdb great-expectations
+pip install dbt-core dbt-duckdb duckdb
 
-# 2. Seed 500 synthetic patients → DuckDB
+# Seed an OMOP-shaped DuckDB database and build the local dbt models.
 python scripts/seed_omop.py --patients 500
-
-# 3. Build the OMOP CDM
 cd dbt_project
-mkdir -p ~/.dbt && cp profiles.yml.example ~/.dbt/profiles.yml
+mkdir -p ~/.dbt
+cp profiles.yml.example ~/.dbt/profiles.yml
+DBT_PROFILES_DIR=~/.dbt dbt seed --profile vital_pipeline --target local
 DBT_PROFILES_DIR=~/.dbt dbt build --profile vital_pipeline --target local
 cd ..
 
-# 4. Run the data quality suite
-DUCKDB_PATH=dbt_project/dbt.duckdb python data_quality/run_gx_suite.py
-
-# 5. Ask the AI analyst
-uvicorn ai.analyst.app:app --host 0.0.0.0 --port 8000
-# → POST http://localhost:8000/ask
-#   {"question": "How many patients with type 2 diabetes had an inpatient visit in 2025?"}
-
-# 6. (Optional) Full local stack with MinIO + Iceberg REST
-docker compose up -d
-
-# 7. (Optional) Add the streaming layer — Redpanda + streaming producer/consumer
-docker compose -f docker-compose.yml -f streaming/docker-compose.streaming.yml up -d redpanda redpanda-console
+# Start the local broker and create the configured topics.
+docker compose -f docker-compose.yml \
+  -f streaming/docker-compose.streaming.yml \
+  up -d redpanda redpanda-console
 python streaming/scripts/create_topics.py
-# In one terminal: continuous IoT sim
-python streaming/seeders/iot_device_simulator.py --patients 50
-# In another: Glue ETL (local mode) → DuckDB silver tables
+```
+
+In separate terminals:
+
+```bash
+# Local consumer: Pydantic validation and DuckDB output.
 python streaming/consumers/glue_etl_job.py --mode local
-# In another: synthetic EHR event producer
-python streaming/producers/healthcare_producer.py --rate 20
 
-# 8. (Optional) Add the ML layer — MLflow + readmission scorer
-docker compose -f ml/docker-compose.ml.yml up -d
+# Generated EHR-style events. Stop with Ctrl-C.
+python streaming/producers/healthcare_producer.py --patients 50 --rate 20
+
+# Generated device telemetry. Stop with Ctrl-C.
+python streaming/seeders/iot_device_simulator.py --patients 50
+```
+
+Inspect local output with DuckDB:
+
+```bash
+duckdb streaming/warehouse/silver.db \
+  -c "SELECT COUNT(*) FROM vitals_silver; SELECT COUNT(*) FROM dlq_silver;"
+```
+
+The counts are run-dependent; this repository does not provide a recorded
+performance or recovery result.
+
+## Optional local ML demo
+
+```bash
 pip install -r ml/requirements.txt
-# Train + promote to Production
-python ml/scripts/train.py --synthetic 1000 --promote
-# Start the FastAPI scorer
-MLFLOW_TRACKING_URI=http://localhost:5000 uvicorn ml.api.app:app --host 0.0.0.0 --port 8001
-# Start the real-time scorer (consumes admissions → publishes predictions)
-KAFKA_BOOTSTRAP_SERVERS=localhost:9092 MLFLOW_TRACKING_URI=http://localhost:5000 \
-  OMOP_DUCKDB=dbt_project/dbt.duckdb SILVER_DUCKDB=streaming/warehouse/silver.db \
-  python ml/realtime/scorer.py
+python ml/scripts/train.py --synthetic 1000 --tracking-uri sqlite:///mlflow.db
+```
 
-# 9. (Optional) Add the HIPAA governance layer — encryption + audit + RBAC
+See `ml/README.md` before starting the scorer or dashboard. Their outputs are for
+software demonstration only.
+
+## Governance utility checks
+
+```bash
 pip install -r governance/requirements.txt
-# Generate a dev key (32 random bytes, base64) — production uses AWS KMS
-export HEALTHCARE_KMS_KEY=$(python -c "import os,base64; print(base64.b64encode(os.urandom(32)).decode())")
-# End-to-end governance smoke test (needs Redpanda from step 7)
-python governance/scripts/e2e_governance_test.py
-
-# 10. (Optional) Launch the clinical dashboard
-pip install -r app/requirements.txt
-streamlit run app/dashboard/clinical_dashboard.py --server.port 8501
-
-# 11. (Optional) Launch the full end-to-end flow via Prefect
-python prefect_flows/real_time_healthcare_flow.py
+python -m pip install pytest
+pytest governance/tests/ -v
 ```
 
-UI:
-- Redpanda Console at <http://localhost:8081> for live topic inspection
-- MLflow at <http://localhost:5000> for experiment tracking + model registry
-- Scorer API docs at <http://localhost:8001/docs>
-- Clinical dashboard at <http://localhost:8501>
+Passing these unit tests demonstrates the utility behavior under test. It does not
+establish integration across the pipeline or compliance with any regulation.
 
----
+## Documentation claim check
 
-## 🏥 What's in the Warehouse
-
-| Table | Rows (typical) | Purpose |
-|-------|---------------|---------|
-| `omcdm_person` | 500+ (synthea) | OMOP-aligned demographics |
-| `omcdm_condition_occurrence` | 1,700+ | Patient × diagnosis events, with CCS category |
-| `omcdm_visit_occurrence` | 1,300+ | Patient × encounter events, by visit type |
-| `omcdm_drug_exposure` | 1,700+ | Prescriptions / administered medications, with drug_code_type |
-| `omcdm_measurement` | 5,700+ | Vitals + labs, with measurement_category (vitals_bp / lab_metabolic / etc.) |
-| `mart_member_roster` | 500+ | Member-level fact table with DQ flags |
-| `int_member_months` | 12,000+ | Member-month grain for PMPM calculations |
-| `icd10_to_ccs` | 30 | Python UDF — ICD-10 prefix → CCS category |
-
-All written as **Iceberg v3** tables in prod (partitioned by year), or as DuckDB tables in local dev.
-
----
-
-## 🤖 The AI Healthcare Analyst
-
-A natural-language interface to your OMOP CDM.
+The claim boundary uses only the Python standard library:
 
 ```bash
-# Single question
-curl -X POST http://localhost:8000/ask \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "How many female patients over 60 had a hypertension diagnosis in 2025?"
-  }'
-# → {
-#     "sql": "SELECT COUNT(DISTINCT p.person_id) FROM main.omcdm_person p JOIN ...",
-#     "rows": [{"count": 47}],
-#     "answer": "47 female patients over 60 had a hypertension diagnosis..."
-#   }
-
-# Multi-step plan
-curl -X POST http://localhost:8000/plan \
-  -H "Content-Type: application/json" \
-  -d '{"goal": "Investigate the prevalence of diabetes-related inpatient visits in 2025"}'
-
-# Cohort builder (structured filters, not NL)
-curl -X POST http://localhost:8000/cohort \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filters": {
-      "min_age": 50,
-      "gender_concept_id": 8532,
-      "ccs_categories": ["endocrine"],
-      "min_visits": 2
-    }
-  }'
-# → { "cohort_size": 38, "sql": "...", "sample": [...] }
+python -m unittest tests.test_documentation_claims -v
 ```
 
-**Why it matters:** the AI analyst doesn't just generate SQL — it executes it, summarizes the result, and chains multiple Q&A steps into a single diagnostic flow. This is the agentic BI pattern the entire healthcare analytics industry is moving toward in 2026.
-
----
-
-## 🧬 The Readmission Scorer (Module 2)
-
-Real-time 30-day readmission risk prediction. LightGBM classifier trained on OMOP features, served via FastAPI, scored continuously by a Kafka consumer that publishes to `healthcare.predictions`.
+For combined CI integration, the required contract job should use this exact command
+so the workflow contract and documentation boundary share one JUnit artifact:
 
 ```bash
-# Score a single patient
-curl -X POST http://localhost:8001/predict \
-  -H "Content-Type: application/json" \
-  -d '{"patient_id": "12345"}'
-# → {
-#     "patient_id": "12345",
-#     "score": 0.42,
-#     "risk_band": "high",
-#     "top_feature_contributions": {
-#       "feature_chronic_conditions": 0.18,
-#       "feature_visits_90d": 0.11,
-#       "feature_total_drugs": 0.07,
-#       "feature_age": 0.04,
-#       "feature_mean_los_days": 0.02
-#     },
-#     "features_used": ["feature_age", "feature_chronic_conditions", ...],
-#     "model_version": "production",
-#     "scored_at": "2026-06-09T15:55:00Z"
-#   }
+pytest tests/test_workflow_contract.py tests/test_documentation_claims.py -v --junitxml=ci-contract.xml
 ```
 
-**Why SHAP:** the model doesn't just hand you a number — it shows you the top 5 features that drove the prediction. A clinician can audit "why is this patient flagged as high risk?" in one glance. This is the explainability bar the entire clinical ML industry is moving toward.
+Other test suites have separate dependencies and scopes. Run the commands in their
+module documentation; do not treat a local subset as evidence for the full system.
 
----
+## Project structure
 
-## 🔒 The HIPAA Governance Layer (Module 3)
-
-Column-level encryption, append-only audit, role-based access control, and Safe Harbor de-identification wrap the entire data surface.
-
-```python
-from governance.encryption.encryptor import PHIEncryptor
-from governance.encryption.crypto import CryptoService
-
-# Encrypt PHI on write
-encryptor = PHIEncryptor(CryptoService())
-encrypted_event = encryptor.encrypt_event({
-    "patient_id": "12345",
-    "mrn": "M001",
-    "heart_rate_bpm": 72,
-})
-# patient_id and mrn are now AES-256-GCM envelopes; heart_rate_bpm is untouched
+```text
+real-time-healthcare-pipeline/
+├── streaming/             # Redpanda producers, event models, local consumer
+├── dbt_project/           # Local dbt models and DuckDB profile example
+├── scripts/               # Generated OMOP-shaped seed data
+├── ml/                    # Synthetic model demo
+├── governance/            # Standalone illustrative controls
+├── app/dashboard/         # Local unauthenticated Streamlit dashboard
+├── ai/analyst/            # Synthetic cohort API; `/ask` and `/plan` disabled
+├── docs/                  # Architecture and data dictionary
+└── tests/                 # Documentation claim boundary
 ```
 
-```python
-from governance.masking.deidentify import deidentify_omop_person
+## License
 
-# Safe Harbor de-identification for research exports
-deidentified = deidentify_omop_person({
-    "person_id": 12345, "mrn": "M001", "name": "Jane Doe",
-    "birth_datetime": "1945-01-15T00:00:00Z", "year_of_birth": 1945,
-    "phone": "555-1234",
-})
-# → mrn: "DH_f96d..." (hashed), name: "DH_9348..." (hashed),
-#    birth_datetime: None, phone: None
-```
-
-```python
-from governance.rbac.policies import Actor, AccessRequest, PolicyEngine, Resource
-
-engine = PolicyEngine()
-# Data scientist trying to read raw MRN — denied
-engine.evaluate(AccessRequest(
-    actor=Actor(id="alice", role="data_scientist"),
-    action="read",
-    resource=Resource(type="table", id="omcdm_person", fields=["person.mrn"]),
-    purpose="model_training",
-))
-# → AccessDecision(allow=False, reason="role 'data_scientist' cannot access...")
-```
-
-**Why this layer matters:** the entire platform — OMOP warehouse, streaming pipeline, ML scorer — can be HIPAA-compliant without any of them knowing about encryption keys, audit logs, or role policies. They just call into the governance layer. Swap the local key manager for AWS KMS in prod, swap the DuckDB audit backend for Iceberg on S3, and the entire system is production-grade HIPAA.
-
----
-
-## 🖥️ The Clinical Dashboard (Module 4)
-
-Streamlit UI over the real-time pipeline. Three views, all read-only, all auto-refreshing.
-
-```bash
-streamlit run app/dashboard/clinical_dashboard.py --server.port 8501
-```
-
-**Live Risk Board** — rolling buffer of the last 200 readmission predictions from `healthcare.predictions`. Histogram of risk scores, count of high-risk patients, per-patient SHAP top-5 features. Refreshes every 5s.
-
-**Patient Detail** — pick a patient, see their demographics (from OMOP), conditions, recent visits, and recent streaming vitals — alongside their latest readmission risk score. Joins OMOP + streaming silver in one view.
-
-**Pipeline Health** — row counts in OMOP + streaming silver, MLflow Production model version, Kafka consumer state. The "is the pipeline running?" single pane of glass.
-
----
-
-## 🎼 The End-to-End Flow (Prefect 3.x)
-
-Wires the four modules together as a single orchestrable flow:
-
-```bash
-python prefect_flows/real_time_healthcare_flow.py
-# OR as a Prefect deployment:
-prefect deploy prefect_flows/real_time_healthcare_flow.py:real_time_healthcare_flow
-```
-
-Tasks: ensure topics → seed OMOP → start producer + consumer + IoT sim → start ML scorer → start dashboard → health check. The flow has a graceful shutdown handler and a quick health check that verifies topics are actually receiving messages.
-
-**The whole platform, one command.** In production, the flow is what gets deployed and scheduled — each module is a separable concern, but the flow is what makes them a pipeline.
-
----
-
-## 📁 Project Structure
-
-```
-vital-pipeline/
-├── dbt_project/
-│   ├── dbt_project.yml
-│   ├── profiles.yml.example
-│   ├── sources/
-│   │   └── omop_sources.yml       # Synthea → Iceberg source mapping
-│   ├── models/
-│   │   ├── staging/               # Eligibility cleaning
-│   │   ├── intermediate/          # Member-months, age, etc.
-│   │   ├── marts/                 # Marts
-│   │   ├── omop/                  # OMOP CDM v5.4 (Person, Condition, Visit)
-│   │   └── udfs/                  # Python UDFs (ICD-10 → CCS)
-│   ├── seeds/                     # ICD-10, CPT reference
-│   ├── packages.yml
-│   └── macros/
-├── data_quality/
-│   └── run_gx_suite.py            # GX + OMOP + freshness checks
-├── ai/
-│   ├── analyst/                   # AI healthcare analyst (FastAPI + MiniMax)
-│   ├── anomaly_detection/         # Claims ML anomaly detection (sklearn)
-│   └── qa_assistant/              # LLM eligibility QA chatbot
-├── pipelines/eligibility-etl/     # Airflow DAG
-├── prefect_flows/                 # Prefect 3.x orchestration
-├── infrastructure/                # Terraform IaC (AWS)
-├── data_contracts/                # Open Data Contract Standard YAML
-├── docs/                          # Mermaid architecture diagrams
-├── scripts/
-│   ├── seed_omop.py               # Synthetic Synthea-like data for local
-│   └── ...
-├── docker-compose.yml             # MinIO + Iceberg REST + Postgres
-└── .github/workflows/ci.yaml      # CI: dbt build, DQ, AI boot
-```
-
----
-
-## 🔬 OMOP CDM Coverage
-
-| OMOP Table | Model | Notes |
-|-----------|-------|-------|
-| `person` | `omcdm_person` | Hash-based person_id for portability |
-| `condition_occurrence` | `omcdm_condition_occurrence` | + CCS category (Python UDF) |
-| `visit_occurrence` | `omcdm_visit_occurrence` | Visit concept by encounter class |
-
-**Not yet covered** (planned): observation, death, payer_plan_period. Add them in a follow-up PR by following the same pattern in `dbt_project/models/omop/`. The `drug_exposure` and `measurement` tables were added in the v2 deepening — see commit history.
-
----
-
-## 🧪 Test Coverage
-
-| Test type | Count | Where |
-|-----------|-------|-------|
-| dbt not_null | 16 | `dbt_project/models/omop/_omop__models.yml` |
-| dbt unique | 5 | Same |
-| dbt accepted_values | 3 | Same |
-| GX column-level | 8 | `data_quality/run_gx_suite.py` |
-| OMOP row-level | 4 | Same |
-| Freshness | 1 | Same |
-
-Total: **37 data quality checks** running on every PR.
-
----
-
-## 🏭 Production Deploy (AWS)
-
-```bash
-# 1. Provision infrastructure
-cd infrastructure
-terraform init && terraform plan && terraform apply
-
-# 2. Generate Synthea (or copy your data) → S3 raw bucket
-# (in prod, Synthea is replaced by your real data sources)
-
-# 3. Build OMOP via dbt Fusion (Iceberg)
-cd ../dbt_project
-DBT_PROFILES_DIR=~/.dbt dbt build --profile vital_pipeline --target prod
-
-# 4. Deploy the AI analyst
-docker build -t ghcr.io/your-org/vital-pipeline/ai-analyst ai/analyst/
-docker push ghcr.io/your-org/vital-pipeline/ai-analyst
-aws lambda create-function \
-  --function-name vital-pipeline-ai-analyst \
-  --package-type Image \
-  --code ImageUri=ghcr.io/your-org/vital-pipeline/ai-analyst:latest \
-  --role arn:aws:iam::ACCOUNT:role/vital-pipeline-ai-analyst
-
-# 5. Wire into your Airflow / Prefect deployment
-# (the dags/ and prefect_flows/ are already in the repo)
-```
-
----
-
-## 📚 Learn More
-
-- `docs/architecture_diagram.md` — full Mermaid architecture
-- `docs/data-dictionary.md` — column-level documentation
-- `data_contracts/eligibility_data_contract.yml` — Open Data Contract Standard
-- `infrastructure/main.tf` — AWS Terraform reference
-
----
-
-## 📝 License
-
-MIT — fork it, ship it, build on it.
+MIT
