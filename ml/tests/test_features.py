@@ -17,6 +17,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from ml.outcomes import feature_engineering  # noqa: E402
 from ml.outcomes.feature_engineering import (  # noqa: E402
     CHRONIC_CCS_PREFIXES,
     FeatureConfig,
@@ -211,3 +212,8 @@ def test_feature_config_defaults():
     assert cfg.lookback_days_short == 90
     assert cfg.lookback_days_long == 365
     assert cfg.silver_path is None
+
+
+def test_streaming_silver_reader_has_duckdb_dependency() -> None:
+    """The optional online-vitals path must resolve its DuckDB connector."""
+    assert callable(feature_engineering.duckdb.connect)

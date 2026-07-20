@@ -1,1 +1,0 @@
-"""Repository-level contract tests."""

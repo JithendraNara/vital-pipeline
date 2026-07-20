@@ -29,6 +29,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+import duckdb
 import numpy as np
 import pandas as pd
 
@@ -71,7 +72,6 @@ class FeatureConfig:
 
 
 def _safe_connect(duckdb_path: Path):
-    import duckdb
     if not duckdb_path.exists():
         raise FileNotFoundError(f"OMOP DuckDB not found at {duckdb_path}")
     return duckdb.connect(str(duckdb_path), read_only=True)

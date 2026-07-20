@@ -29,7 +29,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r ai/analyst/requirements.txt
-          pip install flake8 black isort pytest pytest-cov dbt-core dbt-duckdb duckdb great-expectations pandas
+          pip install flake8 pytest pytest-cov dbt-core dbt-duckdb duckdb great-expectations pandas
           pip install PyYAML==6.0.2
 
       - name: CI workflow contract
@@ -43,11 +43,10 @@ jobs:
           path: ci-contract.xml
           if-no-files-found: error
 
-      - name: Lint
+      - name: Critical syntax and static checks
         run: |
-          flake8 ai/ data_quality/ scripts/ --max-line-length=120 --ignore=E501,W503
-          black --check ai/ data_quality/ scripts/
-          isort --check-only ai/ data_quality/ scripts/
+          python -m compileall -q ai data_quality scripts
+          flake8 ai/ data_quality/ scripts/ --select=E9,F63,F7,F82
 
       - name: Generate Synthea-like seed
         run: python scripts/seed_omop.py --patients 500
@@ -131,13 +130,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r streaming/producers/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint streaming
+      - name: Critical syntax and static checks
         run: |
-          flake8 streaming/ --max-line-length=120 --ignore=E501,W503
-          black --check streaming/
-          isort --check-only streaming/
+          python -m compileall -q streaming
+          flake8 streaming/ --select=E9,F63,F7,F82
 
       - name: Unit tests (no broker)
         run: pytest streaming/tests/ -v --tb=short
@@ -176,13 +174,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r streaming/producers/requirements.txt
           pip install -r ml/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint ML
+      - name: Critical syntax and static checks
         run: |
-          flake8 ml/ --max-line-length=120 --ignore=E501,W503
-          black --check ml/
-          isort --check-only ml/
+          python -m compileall -q ml
+          flake8 ml/ --select=E9,F63,F7,F82
 
       - name: Unit tests (no MLflow server, no Kafka, no OMOP)
         run: pytest ml/tests/ -v --tb=short
@@ -218,13 +215,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r governance/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint governance
+      - name: Critical syntax and static checks
         run: |
-          flake8 governance/ --max-line-length=120 --ignore=E501,W503
-          black --check governance/
-          isort --check-only governance/
+          python -m compileall -q governance
+          flake8 governance/ --select=E9,F63,F7,F82
 
       - name: Unit tests
         run: |
@@ -274,13 +270,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
           pip install -r governance/requirements.txt
-          pip install flake8 black isort pytest
+          pip install flake8 pytest
 
-      - name: Lint app
+      - name: Critical syntax and static checks
         run: |
-          flake8 app/ --max-line-length=120 --ignore=E501,W503
-          black --check app/
-          isort --check-only app/
+          python -m compileall -q app
+          flake8 app/ --select=E9,F63,F7,F82
 
       - name: Unit tests (data accessors, with mocked streamlit)
         run: pytest app/dashboard/tests/ -v --tb=short

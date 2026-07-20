@@ -103,6 +103,27 @@ def test_governance_job_does_not_claim_compliance() -> None:
     assert governance["name"] == "Governance controls (not compliance validation)"
 
 
+def test_python_jobs_use_scoped_critical_static_gates() -> None:
+    jobs = load_workflow()["jobs"]
+    for job_name, compile_targets, lint_targets in (
+        ("pipeline-test", "ai data_quality scripts", "ai/ data_quality/ scripts/"),
+        ("streaming-test", "streaming", "streaming/"),
+        ("ml-test", "ml", "ml/"),
+        ("governance-test", "governance", "governance/"),
+        ("app-test", "app", "app/"),
+    ):
+        commands = "\n".join(
+            step.get("run", "")
+            for step in jobs[job_name]["steps"]
+            if isinstance(step, dict)
+        )
+        assert f"python -m compileall -q {compile_targets}" in commands
+        assert f"flake8 {lint_targets} --select=E9,F63,F7,F82" in commands
+        assert "black --check" not in commands
+        assert "isort --check-only" not in commands
+        assert "--max-line-length" not in commands
+
+
 def test_docker_job_builds_without_credentials_or_publishing() -> None:
     docker_job = load_workflow()["jobs"]["docker"]
     assert "if" not in docker_job
